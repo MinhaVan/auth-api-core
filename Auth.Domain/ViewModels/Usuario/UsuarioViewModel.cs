@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Auth.Domain.Enums;
+using Auth.Domain.Models;
 
 namespace Auth.Domain.ViewModels;
 
@@ -22,4 +23,6 @@ public class UsuarioViewModel
     public int EmpresaId { get; set; }
 
     public virtual IList<AlunoViewModel> Alunos { get; set; }
+    public virtual IList<EnderecoViewModel> Enderecos { get; set; } = new List<EnderecoViewModel>();
+    public virtual EnderecoViewModel EnderecoPrincipal { get; set; } = new EnderecoViewModel();
 }

@@ -43,6 +43,14 @@ public class UsuarioService : IUsuarioService
         _tokenService = ServiceToken;
     }
 
+    public async Task<PaginadoViewModel<UsuarioViewModel>> BuscarPaginadoAsync(int pagina, int tamanho)
+    {
+        var usuarios = await _usuarioRepository
+            .BuscarPaginadoAsync(pagina, tamanho, x => x.EmpresaId == _userContext.Empresa);
+
+        return _mapper.Map<PaginadoViewModel<UsuarioViewModel>>(usuarios);
+    }
+
     public async Task<UsuarioViewModel> Registrar(UsuarioNovoViewModel user)
     {
         var model = _mapper.Map<Usuario>(user);
@@ -105,9 +113,22 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.AtualizarAsync(model);
     }
 
+    public async Task DeletarAsync(int userId)
+    {
+        var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == userId);
+        model.Status = StatusEntityEnum.Deletado;
+        await _usuarioRepository.AtualizarAsync(model);
+    }
+
     public async Task<UsuarioViewModel> ObterPorId(int userId)
     {
-        var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == userId, x => x.Alunos);
+        var model = await _usuarioRepository.BuscarUmAsync(x =>
+            x.Id == userId,
+            x => x.Alunos,
+            x => x.Enderecos,
+            x => x.Motorista,
+            x => x.Motorista.MotoristaRotas.Where(x => x.Status == StatusEntityEnum.Ativo));
+
         return _mapper.Map<UsuarioViewModel>(model);
     }
 

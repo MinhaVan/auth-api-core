@@ -13,4 +13,5 @@ public class Motorista : Entity
     public string Foto { get; set; }
     //
     public virtual Usuario Usuario { get; set; }
+    public virtual List<MotoristaRota> MotoristaRotas { get; set; }
 }

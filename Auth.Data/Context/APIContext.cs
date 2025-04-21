@@ -31,6 +31,7 @@ public class APIContext : DbContext
         modelBuilder.ApplyConfiguration(new EmpresaConfiguration());
         modelBuilder.ApplyConfiguration(new MotoristaConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoConfiguration());
+        modelBuilder.ApplyConfiguration(new MotoristaRotaConfiguration());
         modelBuilder.ApplyConfiguration(new PermissaoConfiguration());
         modelBuilder.ApplyConfiguration(new AlunoConfiguration());
         modelBuilder.ApplyConfiguration(new UsuarioPermissaoConfiguration());

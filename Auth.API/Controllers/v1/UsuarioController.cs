@@ -13,6 +13,7 @@ public class UsuarioController : BaseController
 {
     private readonly IUsuarioService _usuarioService;
 
+
     public UsuarioController(IUsuarioService usuarioService)
     {
         _usuarioService = usuarioService;
@@ -22,6 +23,13 @@ public class UsuarioController : BaseController
     public async Task<ActionResult<UsuarioViewModel>> ObterPorId([FromRoute] int userId)
     {
         return Success(await _usuarioService.ObterPorId(userId));
+    }
+
+    [HttpGet("{pagina}/{tamanho}")]
+    public async Task<ActionResult<PaginadoViewModel<UsuarioViewModel>>> Obter([FromQuery] int pagina, [FromQuery] int tamanho)
+    {
+        var usuarios = await _usuarioService.BuscarPaginadoAsync(pagina, tamanho);
+        return Success(usuarios);
     }
 
     [HttpGet("me")]
@@ -43,6 +51,13 @@ public class UsuarioController : BaseController
     {
         user.PlanoId = user.PlanoId <= 0 ? null : user.PlanoId;
         await _usuarioService.Atualizar(user);
+        return Success();
+    }
+
+    [HttpDelete("{userId}")]
+    public async Task<ActionResult<UsuarioViewModel>> DeleteAsync([FromRoute] int userId)
+    {
+        await _usuarioService.DeletarAsync(userId);
         return Success();
     }
 
