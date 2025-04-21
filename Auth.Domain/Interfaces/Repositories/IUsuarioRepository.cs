@@ -8,5 +8,6 @@ namespace Auth.Domain.Interfaces.Repository;
 public interface IUsuarioRepository : IBaseRepository<Usuario>
 {
     Task<Usuario> LoginAsync(UsuarioLoginViewModel user);
+    Task<Usuario> BuscarPorCpfEmpresaAsync(string cpf, int empresaId);
     string ComputeHash(string input, SHA256CryptoServiceProvider algorithm);
 }

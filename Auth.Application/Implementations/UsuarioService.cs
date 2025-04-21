@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Linq;
 using Auth.Domain.Enums;
 using Auth.Service.Exceptions;
-using System.Collections.Generic;
+using Auth.Domain.Interfaces.Repositories;
 
 namespace Auth.Service.Implementations;
 
@@ -19,7 +19,7 @@ public class UsuarioService : IUsuarioService
     private readonly IMapper _mapper;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IBaseRepository<UsuarioPermissao> _usuarioPermissaoRepository;
-    private readonly IBaseRepository<Permissao> _permissaoRepository;
+    private readonly IPermissaoRepository _permissaoRepository;
     private readonly IBaseRepository<Motorista> _motoristaRepository;
     private readonly IUserContext _userContext;
     private readonly ITokenService _tokenService;
@@ -29,7 +29,7 @@ public class UsuarioService : IUsuarioService
         ITokenService ServiceToken,
         IAmazonService amazonService,
         IBaseRepository<UsuarioPermissao> usuarioPermissaoRepository,
-        IBaseRepository<Permissao> permissaoRepository,
+        IPermissaoRepository permissaoRepository,
         IBaseRepository<Motorista> motoristaRepository,
         IMapper map)
     {
@@ -48,13 +48,12 @@ public class UsuarioService : IUsuarioService
         var model = _mapper.Map<Usuario>(user);
         user.Senha = _tokenService.Base64ToString(user.Senha);
 
-        var usuario = await _usuarioRepository.BuscarUmAsync(x => x.CPF == user.CPF && x.EmpresaId == user.EmpresaId);
+        var usuario = await _usuarioRepository.BuscarPorCpfEmpresaAsync(user.CPF, user.EmpresaId);
         if (usuario != null && usuario.Id > 0)
             throw new BusinessRuleException("Usuário já cadastrado!!");
 
-        var permissaoPadroes = await _permissaoRepository.BuscarAsync(x =>
-            x.EmpresaId == user.EmpresaId &&
-            user.IsMotorista ? x.PadraoMotorista : x.PadraoResponsavel);
+        var permissaoPadroes = await _permissaoRepository
+            .ObterPermissoesPadraoPorEmpresaPerfilAsync(user.EmpresaId, user.IsMotorista);
 
         if (user.IsMotorista)
         {
@@ -86,7 +85,7 @@ public class UsuarioService : IUsuarioService
             await _motoristaRepository.AdicionarAsync(motorista);
         }
 
-        await EnviarEmailConfirmacao(model);
+        await EnviarEmailConfirmacaoAsync(model);
 
         return _mapper.Map<UsuarioViewModel>(model);
     }
@@ -151,12 +150,14 @@ public class UsuarioService : IUsuarioService
         await _usuarioPermissaoRepository.AdicionarAsync(usuarioPermissao);
     }
 
-    private async Task EnviarEmailConfirmacao(Usuario model)
+    private async Task EnviarEmailConfirmacaoAsync(Usuario model)
     {
-        var now = DateTime.Now;
-        var linkDeConfirmacao = "https://www.cadeavan.com.br/confirmacao.html?token=" + model.Id;
-        var titulo = "Confirmação de Cadastro";
-        var mensagem = $@"
+        try
+        {
+            var now = DateTime.Now;
+            var linkDeConfirmacao = "https://www.cadeavan.com.br/confirmacao.html?token=" + model.Id;
+            var titulo = "Confirmação de Cadastro";
+            var mensagem = $@"
             <!DOCTYPE html>
             <html lang='pt-br'>
             <head>
@@ -219,7 +220,11 @@ public class UsuarioService : IUsuarioService
             </body>
             </html>";
 
-        await _amazonService.SendEmail(model.Email, titulo, mensagem);
+            await _amazonService.SendEmail(model.Email, titulo, mensagem);
+        }
+        catch (Exception)
+        {
+        }
     }
 
     public async Task ConfirmarCadastroAsync(int userId)

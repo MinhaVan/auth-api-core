@@ -10,19 +10,26 @@ using Auth.Domain.Models;
 using Auth.Data.Repositories;
 using Auth.Domain.ViewModels;
 using Auth.Domain.Enums;
+using Auth.Domain.Interfaces.Repositories;
+using Auth.Data.Extensions;
 
-namespace Auth.Data.Implementations
+namespace Auth.Data.Implementations;
+
+public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 {
-    public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
+    private readonly APIContext _ctx;
+    private readonly IRedisRepository _redisRepository;
+    public UsuarioRepository(APIContext context, IRedisRepository redisRepository) : base(context)
     {
-        private readonly APIContext _ctx;
+        _ctx = context;
+        _redisRepository = redisRepository;
+    }
 
-        public UsuarioRepository(APIContext context) : base(context)
-        {
-            _ctx = context;
-        }
-
-        public async Task<Usuario> LoginAsync(UsuarioLoginViewModel user)
+    public async Task<Usuario> LoginAsync(UsuarioLoginViewModel user)
+    {
+        var expirationInMinutes = 60;
+        var chaveLogin = $"login:{user.CPF}:{user.Email}:{user.Senha}:{user.EmpresaId}:{user.IsMotorista}";
+        return await _redisRepository.TryGetAsync(chaveLogin, async () =>
         {
             var query = _ctx.Usuarios.Where(x =>
                 x.EmpresaId == user.EmpresaId &&
@@ -36,13 +43,24 @@ namespace Auth.Data.Implementations
             }
 
             return await query.FirstOrDefaultAsync();
-        }
+        }, expirationInMinutes);
+    }
 
-        public string ComputeHash(string input, SHA256CryptoServiceProvider algorithm)
+    public async Task<Usuario> BuscarPorCpfEmpresaAsync(string cpf, int empresaId)
+    {
+        var chaveLogin = $"login:cpf:{cpf}:{empresaId}";
+        return await _redisRepository.TryGetAsync(chaveLogin, async () =>
         {
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
-            return BitConverter.ToString(hashedBytes);
-        }
+            return await _ctx.Usuarios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.CPF.Equals(cpf) && x.EmpresaId == empresaId);
+        });
+    }
+
+    public string ComputeHash(string input, SHA256CryptoServiceProvider algorithm)
+    {
+        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+        byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
+        return BitConverter.ToString(hashedBytes);
     }
 }

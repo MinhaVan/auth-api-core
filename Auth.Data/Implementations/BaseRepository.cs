@@ -13,8 +13,8 @@ namespace Auth.Data.Repositories;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : Entity
 {
-    private readonly APIContext _context;
-    private readonly DbSet<T> _dbSet;
+    protected readonly APIContext _context;
+    protected readonly DbSet<T> _dbSet;
 
     public BaseRepository(APIContext context)
     {
