@@ -9,15 +9,15 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["Auth.API.sln", "."]
+COPY ["Auth.sln", "."]
 COPY ["Auth.API/Auth.API.csproj", "Auth.API/"]
-COPY ["Core.Domain/Core.Domain.csproj", "Core.Domain/"]
-COPY ["Core.Service/Core.Service.csproj", "Core.Service/"]
-COPY ["Core.Data/Core.Data.csproj", "Core.Data/"]
-COPY ["Core.Tests/Core.Tests.csproj", "Core.Tests/"]
+COPY ["Auth.Domain/Auth.Domain.csproj", "Auth.Domain/"]
+COPY ["Auth.Application/Auth.Application.csproj", "Auth.Application/"]
+COPY ["Auth.Data/Auth.Data.csproj", "Auth.Data/"]
+COPY ["Auth.Tests/Auth.Tests.csproj", "Auth.Tests/"]
 
 # Restaura as dependências
-RUN dotnet restore "Auth.API.sln"
+RUN dotnet restore "Auth.sln"
 
 # Copia o restante do código e realiza o build
 COPY . .
