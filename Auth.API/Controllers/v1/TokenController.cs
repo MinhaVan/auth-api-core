@@ -9,11 +9,11 @@ namespace Auth.API.Controllers.v1;
 [ApiController]
 [AllowAnonymous]
 [Route("v1/[controller]")]
-public class AuthController : BaseController
+public class TokenController : BaseController
 {
     private readonly ITokenService _tokenService;
 
-    public AuthController(ITokenService tokenService)
+    public TokenController(ITokenService tokenService)
     {
         _tokenService = tokenService;
     }

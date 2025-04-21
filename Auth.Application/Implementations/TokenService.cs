@@ -83,9 +83,8 @@ public class TokenService : ITokenService
     public string Base64ToString(string base64)
     {
         return base64;
-
-        var valueBytes = Convert.FromBase64String(base64);
-        return Encoding.UTF8.GetString(valueBytes);
+        // var valueBytes = Convert.FromBase64String(base64);
+        // return Encoding.UTF8.GetString(valueBytes);
     }
 
     private string GenerateAccessToken(Usuario usuario)

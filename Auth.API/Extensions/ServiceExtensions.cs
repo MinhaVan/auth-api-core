@@ -22,7 +22,6 @@ public static class ServiceExtensions
 
         services.AddScoped<IAmazonService, AmazonService>();
         services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IEnderecoService, EnderecoService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
 
         Console.WriteLine("Configuração das services realizada com sucesso!");
@@ -32,11 +31,6 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddCache(this IServiceCollection services, SecretManager secretManager)
     {
-        services.AddSignalR().AddStackExchangeRedis(secretManager.ConnectionStrings.RedisConnection, options =>
-        {
-            options.Configuration.ChannelPrefix = "rotaHub"; // Nome opcional
-        });
-
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
             var configuration = secretManager.ConnectionStrings.RedisConnection;
@@ -63,8 +57,6 @@ public static class ServiceExtensions
         {
             options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
         });
-
-        services.AddSignalR();
 
         services.AddFluentValidationAutoValidation()
                 .AddFluentValidationClientsideAdapters();
