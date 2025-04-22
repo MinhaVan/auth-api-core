@@ -12,6 +12,13 @@ namespace Auth.API.Controllers.v1;
 [Authorize("Bearer")]
 public class PerfilController : BaseController
 {
+    [HttpGet("teste")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Teste()
+    {
+        return Success();
+    }
+
     [HttpGet]
     public async Task<IActionResult> Obter()
     {
