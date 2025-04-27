@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Auth.Data.Configurations;
+
 public class AlunoConfiguration : IEntityTypeConfiguration<Aluno>
 {
     public void Configure(EntityTypeBuilder<Aluno> modelBuilder)
     {
         modelBuilder.ConfigureBaseEntity();
-        modelBuilder.ToTable("Alunos");
+        modelBuilder.ToTable("aluno");
 
         modelBuilder.HasOne(x => x.Responsavel)
             .WithMany(y => y.Alunos)

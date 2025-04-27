@@ -11,6 +11,6 @@ public class PermissaoConfiguration : IEntityTypeConfiguration<Permissao>
     {
         modelBuilder.ConfigureBaseEntity();
 
-        modelBuilder.ToTable("permissoes");
+        modelBuilder.ToTable("permissao");
     }
 }

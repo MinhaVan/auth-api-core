@@ -9,7 +9,7 @@ public class MotoristaConfiguration : IEntityTypeConfiguration<Motorista>
     public void Configure(EntityTypeBuilder<Motorista> modelBuilder)
     {
         modelBuilder.ConfigureBaseEntity();
-        modelBuilder.ToTable("motoristas");
+        modelBuilder.ToTable("motorista");
         modelBuilder.HasOne(x => x.Usuario)
             .WithOne(y => y.Motorista)
             .HasForeignKey<Motorista>(x => x.UsuarioId);

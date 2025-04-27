@@ -126,8 +126,7 @@ public class UsuarioService : IUsuarioService
             x.Id == userId,
             x => x.Alunos,
             x => x.Enderecos,
-            x => x.Motorista,
-            x => x.Motorista.MotoristaRotas.Where(x => x.Status == StatusEntityEnum.Ativo));
+            x => x.Motorista);
 
         return _mapper.Map<UsuarioViewModel>(model);
     }

@@ -12,7 +12,7 @@ public class UsuarioPermissaoConfiguration : IEntityTypeConfiguration<UsuarioPer
         modelBuilder.ConfigureBaseEntity();
         modelBuilder.HasKey(x => new { x.UsuarioId, x.PermissaoId });
 
-        modelBuilder.ToTable("usuario_permissao");
+        modelBuilder.ToTable("usuarioPermissao");
         modelBuilder.HasOne(x => x.Usuario)
             .WithMany(y => y.Permissoes)
             .HasForeignKey(x => x.UsuarioId);

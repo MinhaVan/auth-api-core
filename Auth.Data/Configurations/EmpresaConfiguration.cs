@@ -9,7 +9,7 @@ public class EmpresaConfiguration : IEntityTypeConfiguration<Empresa>
     public void Configure(EntityTypeBuilder<Empresa> modelBuilder)
     {
         modelBuilder.ConfigureBaseEntity();
-        modelBuilder.ToTable("empresas");
+        modelBuilder.ToTable("empresa");
         modelBuilder.HasMany(x => x.Usuarios)
             .WithOne(y => y.Empresa)
             .HasForeignKey(x => x.EmpresaId);
