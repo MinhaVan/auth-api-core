@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Repositories;
-using Newtonsoft.Json;
 
 namespace Auth.Data.Extensions;
 
-
-public static class RepositoryExtension
+public static class CacheExtension
 {
     public static async Task<T> TryGetAsync<T>(
         this IRedisRepository redisCache,
@@ -29,8 +26,7 @@ public static class RepositoryExtension
             var data = await getDataFunc();
             if (data != null && !EqualityComparer<T>.Default.Equals(data, default))
             {
-                var jsonData = JsonConvert.SerializeObject(data);
-                await redisCache.SetAsync(fixedKey, jsonData, expirationInMinutes);
+                await redisCache.SetAsync(fixedKey, data, expirationInMinutes);
             }
 
             return data;

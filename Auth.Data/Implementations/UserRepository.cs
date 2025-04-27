@@ -12,6 +12,7 @@ using Auth.Domain.ViewModels;
 using Auth.Domain.Enums;
 using Auth.Domain.Interfaces.Repositories;
 using Auth.Data.Extensions;
+using static Auth.Domain.Constantes.Contantes;
 
 namespace Auth.Data.Implementations;
 
@@ -28,7 +29,8 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     public async Task<Usuario> LoginAsync(UsuarioLoginViewModel user)
     {
         var expirationInMinutes = 60;
-        var chaveLogin = $"login:{user.CPF}:{user.Email}:{user.Senha}:{user.EmpresaId}:{user.IsMotorista}";
+
+        var chaveLogin = string.Format(Cache.ChaveLogin, user.CPF, user.Email, user.Senha, user.EmpresaId, user.IsMotorista);
         return await _redisRepository.TryGetAsync(chaveLogin, async () =>
         {
             var query = _ctx.Usuarios.Where(x =>
@@ -48,7 +50,7 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 
     public async Task<Usuario> BuscarPorCpfEmpresaAsync(string cpf, int empresaId)
     {
-        var chaveLogin = $"login:cpf:{cpf}:{empresaId}";
+        var chaveLogin = string.Format(Cache.ChaveBuscarPorCpfEmpresa, cpf, empresaId);
         return await _redisRepository.TryGetAsync(chaveLogin, async () =>
         {
             return await _ctx.Usuarios
