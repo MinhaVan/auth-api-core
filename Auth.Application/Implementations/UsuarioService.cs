@@ -81,7 +81,7 @@ public class UsuarioService : IUsuarioService
         );
 
         model.Status = StatusEntityEnum.Ativo;
-        model.Senha = _usuarioRepository.ComputeHash(user.Senha, new SHA256CryptoServiceProvider());
+        model.Senha = _usuarioRepository.ComputeHash(user.Senha);
         model.UsuarioValidado = false;
 
         await _usuarioRepository.AdicionarAsync(model);

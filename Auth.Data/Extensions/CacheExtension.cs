@@ -31,9 +31,9 @@ public static class CacheExtension
 
             return data;
         }
-        catch
+        catch (Exception ex)
         {
-            // Em caso de falha, tenta novamente a função de dados
+            Console.WriteLine("Erro ao tentar obter ou setar os dados no cache: " + ex.Message);
             return await getDataFunc();
         }
     }

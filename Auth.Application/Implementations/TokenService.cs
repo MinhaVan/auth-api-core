@@ -32,10 +32,9 @@ public class TokenService : ITokenService
     public async Task<TokenViewModel> Login(UsuarioLoginViewModel user)
     {
         user.Senha = Base64ToString(user.Senha);
-        user.Senha = _usuarioRepository.ComputeHash(user.Senha, new SHA256CryptoServiceProvider());
+        user.Senha = _usuarioRepository.ComputeHash(user.Senha);
 
         var userModel = await _usuarioRepository.LoginAsync(user);
-
         _ = userModel ?? throw new BusinessRuleException("Login ou senha inválido!");
 
         if (!userModel.UsuarioValidado)
@@ -48,7 +47,7 @@ public class TokenService : ITokenService
 
     public async Task<TokenViewModel> RefreshToken(UsuarioLoginViewModel user)
     {
-        var userModel = await _usuarioRepository.BuscarUmAsync(x => x.RefreshToken == user.RefreshToken);
+        var userModel = await _usuarioRepository.BuscarPorRefreshTokenAsync(user.RefreshToken);
         if (userModel == null || userModel.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             throw new BusinessRuleException("Sessão encerrada. Favor reconectar!");
@@ -60,20 +59,16 @@ public class TokenService : ITokenService
     private async Task<TokenViewModel> GenerateTokensForUser(Usuario userModel)
     {
         var now = DateTime.UtcNow;
+        var expirationDate = now.AddMinutes(_configuration.Minutes);
         var accessToken = GenerateAccessToken(userModel);
         var refreshToken = GenerateRefreshToken();
+        var refreshTokenExpiryTime = now.AddDays(_configuration.DaysToExpiry);
 
-        userModel.RefreshToken = refreshToken;
-        userModel.RefreshTokenExpiryTime = now.AddDays(_configuration.DaysToExpiry);
-
-        await _usuarioRepository.AtualizarAsync(userModel);
-
-        var createDate = now;
-        var expirationDate = createDate.AddMinutes(_configuration.Minutes);
+        await _usuarioRepository.AtualizarRefreshTokenAsync(userModel.Id, refreshToken, refreshTokenExpiryTime);
 
         return new TokenViewModel(
             authenticated: true,
-            created: createDate.ToString(DATE_FORMAT),
+            created: now.ToString(DATE_FORMAT),
             expiration: expirationDate.ToString(DATE_FORMAT),
             accessToken: accessToken,
             refreshToken: refreshToken
@@ -93,11 +88,11 @@ public class TokenService : ITokenService
             throw new ArgumentException("A chave secreta deve ter pelo menos 32 caracteres.");
 
         var claims = new List<Claim>
-            {
-                new Claim("UserId", usuario.Id.ToString()),
-                new Claim("Perfil", usuario.Perfil.ToString()),
-                new Claim("Empresa", usuario.EmpresaId.ToString())
-            };
+        {
+            new Claim("UserId", usuario.Id.ToString()),
+            new Claim("Perfil", usuario.Perfil.ToString()),
+            new Claim("Empresa", usuario.EmpresaId.ToString())
+        };
 
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Secret));
         var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

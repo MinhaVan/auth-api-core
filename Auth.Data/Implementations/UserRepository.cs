@@ -26,6 +26,23 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
         _redisRepository = redisRepository;
     }
 
+    public async Task AtualizarRefreshTokenAsync(int userId, string refreshToken, DateTime expiryTime)
+    {
+        var usuario = await _ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == userId);
+        if (usuario != null)
+        {
+            var chaveRefreshTokenAntigo = string.Format(Cache.ChaveRefreshToken, usuario.RefreshToken);
+            var chaveRefreshTokenNovo = string.Format(Cache.ChaveRefreshToken, refreshToken);
+
+            await _redisRepository.RemoveAsync(chaveRefreshTokenAntigo);
+            await _redisRepository.SetAsync(chaveRefreshTokenNovo, refreshToken, expirationInMinutes: 60);
+
+            usuario.RefreshToken = refreshToken;
+            usuario.RefreshTokenExpiryTime = expiryTime;
+            await _ctx.SaveChangesAsync();
+        }
+    }
+
     public async Task<Usuario> LoginAsync(UsuarioLoginViewModel user)
     {
         var expirationInMinutes = 60;
@@ -48,6 +65,19 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
         }, expirationInMinutes);
     }
 
+    public async Task<Usuario> BuscarPorRefreshTokenAsync(string refreshToken)
+    {
+        var chaveRefreshToken = string.Format(Cache.ChaveRefreshToken, refreshToken);
+        var response = await _redisRepository.GetAsync<Usuario>(chaveRefreshToken);
+
+        if (response is null)
+        {
+            response = await _ctx.Usuarios.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
+        }
+
+        return response;
+    }
+
     public async Task<Usuario> BuscarPorCpfEmpresaAsync(string cpf, int empresaId)
     {
         var chaveLogin = string.Format(Cache.ChaveBuscarPorCpfEmpresa, cpf, empresaId);
@@ -59,10 +89,13 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
         });
     }
 
-    public string ComputeHash(string input, SHA256CryptoServiceProvider algorithm)
+    public string ComputeHash(string senha)
     {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-        byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
-        return BitConverter.ToString(hashedBytes);
+        using (var algorithm = SHA256.Create())
+        {
+            var bytes = Encoding.UTF8.GetBytes(senha);
+            var hashBytes = algorithm.ComputeHash(bytes);
+            return Convert.ToHexString(hashBytes);
+        }
     }
 }
