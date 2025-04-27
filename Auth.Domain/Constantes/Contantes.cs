@@ -4,7 +4,7 @@ public static class Contantes
 {
     public static class Cache
     {
-        public const string ChaveLogin = "login:{cpf}:{email}:{senha}:{empresaId}:{isMotorista}";
-        public const string ChaveBuscarPorCpfEmpresa = "buscarPorCpfEmpresa:cpf:{cpf}:{empresaId}";
+        public static string ChaveLogin = "login:{0}:{1}:{2}:{3}:{4}";
+        public static string ChaveBuscarPorCpfEmpresa = "buscarPorCpfEmpresa:cpf:{0}:{1}";
     }
 }

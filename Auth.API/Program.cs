@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Prometheus;
+// using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var environment = builder.Environment.EnvironmentName;
@@ -21,6 +22,7 @@ builder.Configuration
 
 // Adiciona as configurações do Secrets Manager
 var secretManager = builder.Services.AddSecretManager(builder.Configuration);
+// Console.WriteLine($"Iniciando a API no ambiente '{JsonConvert.SerializeObject(secretManager)}'");
 
 // Configura os serviços
 builder.Services.AddCustomAuthentication(secretManager)
