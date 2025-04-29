@@ -76,6 +76,16 @@ jobs:
         run: |
           dotnet test --no-build --verbosity normal
 
+      - name: Echo
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          script: |
+            echo "{{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
+            echo "{{ secrets.DOCKER_IMAGE_NAME_PROD }}"
+            echo "{{ secrets.VPS_PROD_HOST }}"
+            echo "{{ secrets.VPS_PROD_USER }}"
+            echo "{{ secrets.VPS_PROD_SSH_KEY }}"
+
       - name: Upload to PROD VPS
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -84,17 +94,6 @@ jobs:
           key: ${{ secrets.VPS_PROD_SSH_KEY }}
           source: "deploy/"
           target: "~/deploy"
-
-      - name: Echo
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          script: |
-
-            echo "{{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
-            echo "{{ secrets.DOCKER_IMAGE_NAME_PROD }}"
-            echo "{{ secrets.VPS_PROD_HOST }}"
-            echo "{{ secrets.VPS_PROD_USER }}"
-            echo "{{ secrets.VPS_PROD_SSH_KEY }}"
 
       - name: SSH Deploy PROD
         uses: appleboy/ssh-action@v0.1.10
