@@ -23,15 +23,6 @@ jobs:
         run: |
           dotnet test --no-build --verbosity normal
 
-      - name: Upload to DEV VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_DEV_HOST }}
-          username: ${{ secrets.VPS_DEV_USER }}
-          key: ${{ secrets.VPS_DEV_SSH_KEY }}
-          source: "deploy/"
-          target: "~/deploy"
-
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -40,7 +31,7 @@ jobs:
           key: ${{ secrets.VPS_DEV_SSH_KEY }}
           script: |
             set -e
-            cd ~/dev/infra/APIs
+            cd ~/dev/infra/APIs/
             docker compose stop ${{ secrets.DOCKER_CONTAINER_NAME_DEV }} || true
             docker compose rm -f ${{ secrets.DOCKER_CONTAINER_NAME_DEV }} || true
             docker rmi ${{ secrets.DOCKER_IMAGE_NAME_DEV }} || true
@@ -59,80 +50,48 @@ jobs:
               exit 1
             fi
 
-  deploy-prod:
-    if: github.ref == 'refs/heads/main'
-    # needs: approval-prod
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      #
-      # - name: Configurar .NET
-      #   uses: actions/setup-dotnet@v3
-      #   with:
-      #     dotnet-version: "9.0.x"
+    deploy-prod:
+      if: github.ref == 'refs/heads/main'
+      runs-on: ubuntu-latest
+      environment:
+        name: production
+        url: https://seu-site-prod.com
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      # - name: Testes unitários
-      #   run: |
-      #     dotnet test --no-build --verbosity normal
+        - name: Configurar .NET
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: "9.0.x"
 
-      - name: Testar secrets no PROD
-        run: |
-          echo "VPS_PROD_HOST: ${{ secrets.VPS_PROD_HOST }}"
-          echo "VPS_PROD_USER: ${{ secrets.VPS_PROD_USER }}"
-          echo "DOCKER_CONTAINER_NAME_PROD: ${{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
-          echo "DOCKER_IMAGE_NAME_PROD: ${{ secrets.DOCKER_IMAGE_NAME_PROD }}"
+        - name: Testes unitários
+          run: |
+            dotnet test --no-build --verbosity normal
 
-      - name: Upload to PROD VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_PROD_HOST }}
-          username: ${{ secrets.VPS_PROD_USER }}
-          key: ${{ secrets.VPS_PROD_SSH_KEY }}
-          source: "deploy/"
-          target: "~/deploy"
+        - name: SSH Deploy PROD
+          uses: appleboy/ssh-action@v0.1.10
+          with:
+            host: ${{ secrets.VPS_PROD_HOST }}
+            username: ${{ secrets.VPS_PROD_USER }}
+            key: ${{ secrets.VPS_PROD_SSH_KEY }}
+            script: |
+              set -e
+              cd ~/prod/infra/APIs/
+              docker compose stop ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
+              docker compose rm -f ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
+              docker rmi ${{ secrets.DOCKER_IMAGE_NAME_PROD }} || true
 
-      - name: SSH Deploy PROD
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.VPS_PROD_HOST }}
-          username: ${{ secrets.VPS_PROD_USER }}
-          key: ${{ secrets.VPS_PROD_SSH_KEY }}
-          script: |
+              docker compose build
 
-            echo "{{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
-            echo "{{ secrets.DOCKER_IMAGE_NAME_PROD }}"
-            echo "{{ secrets.VPS_PROD_HOST }}"
-            echo "{{ secrets.VPS_PROD_USER }}"
-            echo "{{ secrets.VPS_PROD_SSH_KEY }}"
-
-
-            set -e
-            cd ~/prod/infra/APIs
-            docker compose stop ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
-            docker compose rm -f ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
-            docker rmi ${{ secrets.DOCKER_IMAGE_NAME_PROD }} || true
-
-            docker compose build
-
-            if docker compose up -d; then
-              echo "Deploy PROD com sucesso! Salvando imagem de backup..."
-              docker tag ${{ secrets.DOCKER_IMAGE_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
-            else
-              echo "Erro no deploy PROD. Rollback iniciado..."
-              docker compose down || true
-              docker pull ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
-              docker run -d --name ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
-              echo "Rollback PROD concluído."
-              exit 1
-            fi
-
-  approval-prod:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://seu-site-prod.com
-    steps:
-      - name: Esperando aprovação manual
-        run: echo "Aguardando aprovação para deploy em produção..."
+              if docker compose up -d; then
+                echo "Deploy PROD com sucesso! Salvando imagem de backup..."
+                docker tag ${{ secrets.DOCKER_IMAGE_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
+              else
+                echo "Erro no deploy PROD. Rollback iniciado..."
+                docker compose down || true
+                docker pull ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
+                docker run -d --name ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
+                echo "Rollback PROD concluído."
+                exit 1
+              fi
