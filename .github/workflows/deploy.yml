@@ -92,6 +92,14 @@ jobs:
           username: ${{ secrets.VPS_PROD_USER }}
           key: ${{ secrets.VPS_PROD_SSH_KEY }}
           script: |
+
+            echo "{{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
+            echo "{{ secrets.DOCKER_IMAGE_NAME_PROD }}"
+            echo "{{ secrets.VPS_PROD_HOST }}"
+            echo "{{ secrets.VPS_PROD_USER }}"
+            echo "{{ secrets.VPS_PROD_SSH_KEY }}"
+
+
             set -e
             cd ~/prod/infra/APIs
             docker compose stop ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
