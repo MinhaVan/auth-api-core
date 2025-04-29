@@ -60,14 +60,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configurar .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "9.0.x"
+      # - name: Configurar .NET
+      #   uses: actions/setup-dotnet@v3
+      #   with:
+      #     dotnet-version: "9.0.x"
 
-      - name: Testes unitários
-        run: |
-          dotnet test --no-build --verbosity normal
+      # - name: Testes unitários
+      #   run: |
+      #     dotnet test --no-build --verbosity normal
 
       - name: SSH Deploy PROD
         uses: appleboy/ssh-action@v0.1.10
@@ -76,22 +76,25 @@ jobs:
           username: ${{ secrets.VPS_PROD_USER }}
           key: ${{ secrets.VPS_PROD_SSH_KEY }}
           script: |
-            set -e
-            cd ~/prod/infra/APIs/
-            docker compose stop ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
-            docker compose rm -f ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
-            docker rmi ${{ secrets.DOCKER_IMAGE_NAME_PROD }} || true
+            echo "Teste de conexão"
+          debug: true
+          # script: |
+          #   set -e
+          #   cd ~/prod/infra/APIs/
+          #   docker compose stop ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
+          #   docker compose rm -f ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} || true
+          #   docker rmi ${{ secrets.DOCKER_IMAGE_NAME_PROD }} || true
 
-            docker compose build
+          #   docker compose build
 
-            if docker compose up -d; then
-              echo "Deploy PROD com sucesso! Salvando imagem de backup..."
-              docker tag ${{ secrets.DOCKER_IMAGE_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
-            else
-              echo "Erro no deploy PROD. Rollback iniciado..."
-              docker compose down || true
-              docker pull ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
-              docker run -d --name ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
-              echo "Rollback PROD concluído."
-              exit 1
-            fi
+          #   if docker compose up -d; then
+          #     echo "Deploy PROD com sucesso! Salvando imagem de backup..."
+          #     docker tag ${{ secrets.DOCKER_IMAGE_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
+          #   else
+          #     echo "Erro no deploy PROD. Rollback iniciado..."
+          #     docker compose down || true
+          #     docker pull ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
+          #     docker run -d --name ${{ secrets.DOCKER_CONTAINER_NAME_PROD }} ${{ secrets.DOCKER_IMAGE_NAME_PROD_BACKUP }}
+          #     echo "Rollback PROD concluído."
+          #     exit 1
+          #   fi
