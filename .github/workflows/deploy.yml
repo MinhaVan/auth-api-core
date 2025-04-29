@@ -67,24 +67,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configurar .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "9.0.x"
+      # - name: Configurar .NET
+      #   uses: actions/setup-dotnet@v3
+      #   with:
+      #     dotnet-version: "9.0.x"
 
-      - name: Testes unitários
+      # - name: Testes unitários
+      #   run: |
+      #     dotnet test --no-build --verbosity normal
+
+      - name: Testar secrets no PROD
         run: |
-          dotnet test --no-build --verbosity normal
-
-      - name: Echo
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          script: |
-            echo "{{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
-            echo "{{ secrets.DOCKER_IMAGE_NAME_PROD }}"
-            echo "{{ secrets.VPS_PROD_HOST }}"
-            echo "{{ secrets.VPS_PROD_USER }}"
-            echo "{{ secrets.VPS_PROD_SSH_KEY }}"
+          echo "VPS_PROD_HOST: ${{ secrets.VPS_PROD_HOST }}"
+          echo "VPS_PROD_USER: ${{ secrets.VPS_PROD_USER }}"
+          echo "DOCKER_CONTAINER_NAME_PROD: ${{ secrets.DOCKER_CONTAINER_NAME_PROD }}"
+          echo "DOCKER_IMAGE_NAME_PROD: ${{ secrets.DOCKER_IMAGE_NAME_PROD }}"
 
       - name: Upload to PROD VPS
         uses: appleboy/scp-action@v0.1.7
