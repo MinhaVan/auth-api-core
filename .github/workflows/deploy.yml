@@ -34,12 +34,10 @@ jobs:
             cd deploy/dev/
 
             cd ./auth-api-core
-            git checkout develop
-            git pull
+            git fetch origin && git checkout develop && git pull
 
             cd ../infra
-            git checkout develop
-            git pull
+            git fetch origin && git checkout develop && git pull
 
             cd ./APIs
             docker compose stop auth-api-dev || true
@@ -91,12 +89,10 @@ jobs:
             cd deploy/prod/
 
             cd ./auth-api-core
-            git checkout main
-            git pull
+            git fetch origin && git checkout main && git pull
 
             cd ../infra
-            git checkout main
-            git pull
+            git fetch origin && git checkout main && git pull
 
             cd ./APIs
             docker compose stop auth-api || true
