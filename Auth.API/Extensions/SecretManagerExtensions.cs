@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Auth.Service.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class SecretManagerExtensions
 {
     public static SecretManager AddSecretManager(this IServiceCollection services, ConfigurationManager configuration)

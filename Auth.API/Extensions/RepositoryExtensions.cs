@@ -1,14 +1,15 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Auth.Data.Implementations;
 using Auth.Data.Repositories;
 using Auth.Domain.Interfaces.Repositories;
 using Auth.Domain.Interfaces.Repository;
 using Auth.Domain.Models;
-using Auth.Service.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class RepositoryExtensions
 {
     public static IServiceCollection AddCustomRepository(

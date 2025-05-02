@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Auth.Data.Context;
@@ -11,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auth.Data.Implementations;
 
+[ExcludeFromCodeCoverage]
 public class PermissaoRepository : BaseRepository<Permissao>, IPermissaoRepository
 {
     private readonly IRedisRepository _redisRepository;

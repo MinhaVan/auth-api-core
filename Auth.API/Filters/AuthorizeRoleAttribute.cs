@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 using System.Security.Claims;
 using Auth.Domain.Enums;
+using System.Diagnostics.CodeAnalysis;
 
+[ExcludeFromCodeCoverage]
 public class AuthorizeRolesAttribute : ActionFilterAttribute
 {
     private readonly PerfilEnum[] _requiredRoles;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Auth.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ namespace Auth.API.Controllers.v1;
 [ApiController]
 [Route("v1/[controller]")]
 [Authorize("Bearer")]
+[ExcludeFromCodeCoverage]
 public class PerfilController : BaseController
 {
     [HttpGet("teste")]

@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public class Token
 {
     public Token(bool autenticado, string criado, string expiracao, string accessToken, string refreshToken)

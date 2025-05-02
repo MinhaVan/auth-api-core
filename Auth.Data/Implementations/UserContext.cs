@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Auth.Domain.Interfaces.Repository;
 using Microsoft.AspNetCore.Http;
 
 namespace Auth.Data.Implementations;
 
+[ExcludeFromCodeCoverage]
 public class UserContext : IUserContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

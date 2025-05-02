@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Auth.Data.Configurations;
 
+[ExcludeFromCodeCoverage]
 public static class ModelBuilderExtensions
 {
     public static EntityTypeBuilder<T> ConfigureBaseEntity<T>(this EntityTypeBuilder<T> builder) where T : Entity

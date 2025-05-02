@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public class Paginado<T>
 {
     public Paginado(int pagina, int tamanho, int quantidade, List<T> data)

@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Auth.Service.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class HttpExtensions
 {
     public static IServiceCollection AddCustomHttp(this IServiceCollection services, SecretManager secretManager)

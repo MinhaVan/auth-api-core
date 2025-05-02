@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Enums;
 
 namespace Auth.Domain.ViewModels;
 
+[ExcludeFromCodeCoverage]
 public class MotoristaViewModel
 {
     public string CNH { get; set; }

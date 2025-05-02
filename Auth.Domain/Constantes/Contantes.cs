@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Auth.Domain.Constantes;
 
+[ExcludeFromCodeCoverage]
 public static class Contantes
 {
     public static class Cache

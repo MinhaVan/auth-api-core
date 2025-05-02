@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class AuthorizationExtensions
 {
     public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)

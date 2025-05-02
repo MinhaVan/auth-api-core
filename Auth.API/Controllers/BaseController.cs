@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Auth.Domain.ViewModels;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.API.Controllers;
 
+[ExcludeFromCodeCoverage]
 public abstract class BaseController : ControllerBase
 {
     protected ActionResult Default(int statusCode, string message, bool sucesso, object data = null, List<string> errors = null)

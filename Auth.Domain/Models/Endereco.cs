@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public class Endereco : Entity
 {
     public int? UsuarioId { get; set; }

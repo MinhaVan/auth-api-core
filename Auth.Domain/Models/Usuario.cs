@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Enums;
 
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public class Usuario : Entity
 {
     public string Email { get; set; }

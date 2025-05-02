@@ -5,9 +5,11 @@ using System;
 using System.Threading.Tasks;
 using System.Threading;
 using Auth.Data.Configurations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Data.Context;
 
+[ExcludeFromCodeCoverage]
 public class APIContext : DbContext
 {
     public APIContext(DbContextOptions<APIContext> options) : base(options)

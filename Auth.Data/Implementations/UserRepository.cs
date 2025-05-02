@@ -13,9 +13,11 @@ using Auth.Domain.Enums;
 using Auth.Domain.Interfaces.Repositories;
 using Auth.Data.Extensions;
 using static Auth.Domain.Constantes.Contantes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Data.Implementations;
 
+[ExcludeFromCodeCoverage]
 public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 {
     private readonly APIContext _ctx;

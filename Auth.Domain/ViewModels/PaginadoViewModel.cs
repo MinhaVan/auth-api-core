@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Domain.ViewModels;
 
+[ExcludeFromCodeCoverage]
 public class PaginadoViewModel<T>
 {
     public PaginadoViewModel(int pagina, int tamanho, int quantidade, List<T> data)

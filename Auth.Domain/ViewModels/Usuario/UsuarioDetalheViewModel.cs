@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Enums;
-using Auth.Domain.Models;
 
-namespace Auth.Domain.ViewModels;
+namespace Auth.Domain.ViewModels.Usuario;
 
 [ExcludeFromCodeCoverage]
-public class UsuarioViewModel
+public class UsuarioDetalheViewModel
 {
     public int Id { get; set; }
     public string CPF { get; set; }
@@ -23,9 +21,4 @@ public class UsuarioViewModel
     public string RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
     public int EmpresaId { get; set; }
-
-    public virtual IList<AlunoViewModel> Alunos { get; set; }
-    public virtual IList<EnderecoViewModel> Enderecos { get; set; } = new List<EnderecoViewModel>();
-    public virtual EnderecoViewModel EnderecoPrincipal { get; set; } = new EnderecoViewModel();
-    public virtual MotoristaViewModel Motorista { get; set; }
 }

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Service.Configuration;
 
+[ExcludeFromCodeCoverage]
 public class SecretManager
 {
     public IpRateLimiting IpRateLimiting { get; set; }
@@ -13,6 +15,7 @@ public class SecretManager
     public string AllowedHosts { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class IpRateLimiting
 {
     public bool EnableEndpointRateLimiting { get; set; }
@@ -22,6 +25,7 @@ public class IpRateLimiting
     public List<GeneralRule> GeneralRules { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class GeneralRule
 {
     public string Endpoint { get; set; }
@@ -29,12 +33,14 @@ public class GeneralRule
     public int Limit { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class AuthenticatedRateLimit
 {
     public string Period { get; set; }
     public int Limit { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class ConnectionStrings
 {
     public string DefaultConnection { get; set; }
@@ -42,11 +48,13 @@ public class ConnectionStrings
     public string RabbitConnection { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class Logging
 {
     public LogLevel LogLevel { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class LogLevel
 {
     public string Default { get; set; }
@@ -54,6 +62,7 @@ public class LogLevel
     public string MicrosoftHostingLifetime { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class TokenConfigurations
 {
     public string Audience { get; set; }
@@ -63,6 +72,7 @@ public class TokenConfigurations
     public int DaysToExpiry { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class Google
 {
     public string BaseUrl { get; set; }

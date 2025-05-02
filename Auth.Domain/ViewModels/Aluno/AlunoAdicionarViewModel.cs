@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.Domain.ViewModels;
 
+[ExcludeFromCodeCoverage]
 public class AlunoAdicionarViewModel
 {
     public string PrimeiroNome { get; set; }

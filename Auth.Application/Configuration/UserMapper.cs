@@ -1,9 +1,12 @@
 using AutoMapper;
 using Auth.Domain.ViewModels;
 using Auth.Domain.Models;
+using System.Diagnostics.CodeAnalysis;
+using Auth.Domain.ViewModels.Usuario;
 
 namespace Auth.Service.Configurations;
 
+[ExcludeFromCodeCoverage]
 public class UserMapper : Profile
 {
     public UserMapper()

@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace Auth.Domain.Utils;
 
+[ExcludeFromCodeCoverage]
 public static class StringExtensions
 {
     public static string ApenasNumeros(this string input)

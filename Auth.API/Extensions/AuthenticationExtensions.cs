@@ -4,9 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Auth.Service.Configuration;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class AuthenticationExtensions
 {
     public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, SecretManager secretManager)

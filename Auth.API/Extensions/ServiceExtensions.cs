@@ -10,10 +10,11 @@ using System.Reflection;
 using StackExchange.Redis;
 using Auth.Service.Configuration;
 using Newtonsoft.Json;
-// using Auth.Service.Workers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class ServiceExtensions
 {
     public static IServiceCollection AddCustomServices(this IServiceCollection services, SecretManager secretManager)

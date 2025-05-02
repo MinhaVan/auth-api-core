@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Enums;
 
 namespace Auth.Domain.ViewModels;
 
+[ExcludeFromCodeCoverage]
 public class UsuarioNovoViewModel
 {
     public string CPF { get; set; }

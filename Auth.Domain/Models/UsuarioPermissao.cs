@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public class UsuarioPermissao : Entity
 {
     public int UsuarioId { get; set; }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Auth.Domain.Models;
-using Auth.Domain.ViewModels;
 
 namespace Auth.Domain.Interfaces.Repository;
 

@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Models;
 
 namespace Auth.Domain.ViewModels;
 
+[ExcludeFromCodeCoverage]
 public class AlunoViewModel
 {
     public int Id { get; set; }

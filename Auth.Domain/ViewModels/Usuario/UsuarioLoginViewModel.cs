@@ -1,12 +1,14 @@
-namespace Auth.Domain.ViewModels
+using System.Diagnostics.CodeAnalysis;
+
+namespace Auth.Domain.ViewModels;
+
+[ExcludeFromCodeCoverage]
+public class UsuarioLoginViewModel
 {
-    public class UsuarioLoginViewModel
-    {
-        public string RefreshToken { get; set; }
-        public string CPF { get; set; }
-        public string Email { get; set; }
-        public string Senha { get; set; }
-        public int EmpresaId { get; set; }
-        public bool IsMotorista { get; set; } = false;
-    }
+    public string RefreshToken { get; set; }
+    public string CPF { get; set; }
+    public string Email { get; set; }
+    public string Senha { get; set; }
+    public int EmpresaId { get; set; }
+    public bool IsMotorista { get; set; } = false;
 }

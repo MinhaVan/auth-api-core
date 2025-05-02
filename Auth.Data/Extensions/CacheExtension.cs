@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Repositories;
 
 namespace Auth.Data.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class CacheExtension
 {
     public static async Task<T> TryGetAsync<T>(

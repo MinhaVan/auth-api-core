@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Enums;
 
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public class EnderecoAtualizarViewModel
 {
     public int Id { get; set; }

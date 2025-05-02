@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Enums;
 
 namespace Auth.Domain.Models;
 
+[ExcludeFromCodeCoverage]
 public abstract class Entity
 {
     public int Id { get; set; }

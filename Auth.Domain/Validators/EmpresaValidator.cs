@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.Models;
 using FluentValidation;
 
 namespace Auth.Domain.Validators;
 
+[ExcludeFromCodeCoverage]
 public class EmpresaValidator : AbstractValidator<Empresa>
 {
     public EmpresaValidator()

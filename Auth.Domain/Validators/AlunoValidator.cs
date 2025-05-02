@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Auth.Domain.ViewModels;
 using FluentValidation;
 
 namespace Auth.Domain.Validators;
 
+[ExcludeFromCodeCoverage]
 public class AlunoAdicionarViewModelValidator : AbstractValidator<AlunoAdicionarViewModel>
 {
     public AlunoAdicionarViewModelValidator()

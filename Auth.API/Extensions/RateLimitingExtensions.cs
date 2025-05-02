@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using AspNetCoreRateLimit;
 using Auth.Service.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.API.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class RateLimitingExtensions
 {
     public static IServiceCollection AddCustomRateLimiting(this IServiceCollection services, SecretManager secretManager)

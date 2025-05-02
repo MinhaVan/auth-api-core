@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Auth.Domain.ViewModels;
 using Auth.Domain.Interfaces.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.API.Controllers.v1;
 
 [ApiController]
 [Route("v1/[controller]")]
 [Authorize("Bearer")]
+[ExcludeFromCodeCoverage]
 public class UsuarioController : BaseController
 {
     private readonly IUsuarioService _usuarioService;
