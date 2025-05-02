@@ -43,11 +43,12 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.cobertura.xml"
 
       - name: Run tests with coverage
-        run: dotnet test Auth.Tests/Auth.Tests.csproj \
-          --no-build \
-          --configuration Release \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./TestResults
+        run: |
+          dotnet test Auth.Tests/Auth.Tests.csproj \
+            --no-build \
+            --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
 
       - name: List cobertura files
         run: find . -name "coverage.cobertura.xml"
