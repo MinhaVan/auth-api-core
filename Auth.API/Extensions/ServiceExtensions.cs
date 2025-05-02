@@ -9,6 +9,7 @@ using FluentValidation;
 using System.Reflection;
 using StackExchange.Redis;
 using Auth.Service.Configuration;
+using Newtonsoft.Json;
 // using Auth.Service.Workers;
 
 namespace Auth.API.Extensions;
@@ -31,6 +32,7 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddCache(this IServiceCollection services, SecretManager secretManager)
     {
+        Console.WriteLine(JsonConvert.SerializeObject(secretManager));
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
             var configuration = secretManager.ConnectionStrings.RedisConnection;
