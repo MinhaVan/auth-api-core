@@ -25,6 +25,9 @@ jobs:
       - name: Install SonarScanner
         run: dotnet tool install --global dotnet-sonarscanner
 
+      - name: Build project
+        run: dotnet build --no-incremental
+
       - name: Begin Sonar Analysis
         run: |
           dotnet sonarscanner begin \
@@ -32,24 +35,12 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.cobertura.xml"
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
 
       - name: Run tests with coverage
-        run: |
-          dotnet test \
-            --no-build \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=./TestResults/coverage.cobertura.xml \
-            /p:Exclude="[*.Migrations]*"
+        run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults /p:CoverletOutputFormat=cobertura
 
-      - name: Debug coverage file (opcional)
-        run: |
-          echo "Verificando se o arquivo de cobertura foi gerado:"
-          ls -lah ./TestResults
-          cat ./TestResults/**/coverage.cobertura.xml | head -n 20
-
-      - name: Build project
+      - name: Build
         run: dotnet build
 
       - name: End Sonar Analysis
@@ -112,7 +103,8 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Testes unitários
-        run: dotnet test --no-build --verbosity normal
+        run: |
+          dotnet test --no-build --verbosity normal
 
       - name: Run EF Core Migrations
         run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
