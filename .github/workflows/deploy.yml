@@ -43,14 +43,12 @@ jobs:
             --no-build \
             --configuration Release \
             --collect:"XPlat Code Coverage" \
-            --results-directory TestResults \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura
+            --results-directory ./TestResults
 
       - name: Move coverage file
         run: |
           mkdir -p TestResults
-          cp TestResults/**/coverage.cobertura.xml TestResults/coverage.cobertura.xml
+          cp $(find ./TestResults -name 'coverage.cobertura.xml') TestResults/coverage.cobertura.xml
 
       - name: Build
         run: dotnet build
