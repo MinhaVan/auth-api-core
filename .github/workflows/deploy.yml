@@ -44,14 +44,15 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          dotnet test Auth.Tests/Auth.Tests.csproj \
-            --no-build \
-            --configuration Release \
-            --collect:"XPlat Code Coverage" \
-            --results-directory ./TestResults
+          dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
       - name: List cobertura files
-        run: find . -name "coverage.cobertura.xml"
+        run: find ./TestResults -name "*.xml"
+
+      - name: Move coverage file
+        run: |
+          mkdir -p TestResults
+          cp $(find ./TestResults -name 'coverage.cobertura.xml') TestResults/coverage.cobertura.xml
 
       - name: Ver conteúdo do TestResults
         run: |
