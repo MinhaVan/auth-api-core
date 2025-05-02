@@ -8,11 +8,6 @@ on:
 
 jobs:
   deploy-dev:
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      SONAR_SCANNER_DEBUG: true
-      SONAR_VERBOSE: true
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     concurrency:
       group: ${{ github.repository }}-deploy-dev
@@ -40,26 +35,10 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.cobertura.xml" \
-            /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml" \
-            /d:sonar.verbose=true
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
 
       - name: Run tests with coverage
-        run: |
-          dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
-
-      - name: List cobertura files
-        run: find ./TestResults -name "*.xml"
-
-      - name: Move coverage file
-        run: |
-          mkdir -p TestResults
-          cp $(find ./TestResults -name 'coverage.cobertura.xml') TestResults/coverage.cobertura.xml
-
-      - name: Ver conteúdo do TestResults
-        run: |
-          ls -R ./TestResults
-          cat ./TestResults/coverage.cobertura.xml || echo "Arquivo não encontrado"
+        run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults /p:CoverletOutputFormat=cobertura
 
       - name: Build
         run: dotnet build
