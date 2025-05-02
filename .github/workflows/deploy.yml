@@ -26,6 +26,9 @@ jobs:
         run: |
           dotnet test --no-build --verbosity normal
 
+      - name: Run EF Core Migrations
+        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
+
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
         with:
