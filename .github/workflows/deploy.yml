@@ -47,16 +47,17 @@ jobs:
             docker compose rm -f auth-api-dev || true
             docker rmi apis-auth-api-dev:latest || true
 
-            docker compose build
+            docker compose build auth-api-dev
 
-            if docker compose up -d; then
+            if docker compose up -d auth-api-dev; then
               echo "Deploy DEV com sucesso! Salvando imagem de backup..."
               docker tag apis-auth-api-dev:latest apis-auth-api-dev-backup:latest
             else
               echo "Erro no deploy DEV. Rollback iniciado..."
-              docker compose down || true
-              docker tag apis-auth-api-backup:latest apis-auth-api:latest
-              docker run -d --name apis-auth-api-dev:latest apis-auth-api-dev-backup:latest
+              docker compose stop auth-api-dev || true
+              docker compose rm -f auth-api-dev || true
+              docker tag apis-auth-api-dev-backup:latest apis-auth-api-dev:latest
+              docker run -d --name auth-api-dev apis-auth-api-dev:latest
               echo "Rollback DEV concluído."
               exit 1
             fi
@@ -106,16 +107,18 @@ jobs:
             docker compose rm -f auth-api || true
             docker rmi apis-auth-api:latest || true
 
-            docker compose build
+            docker compose build auth-api
 
-            if docker compose up -d; then
+            if docker compose up -d auth-api; then
               echo "Deploy PROD com sucesso! Salvando imagem de backup..."
               docker tag apis-auth-api:latest apis-auth-api-backup:latest
             else
               echo "Erro no deploy PROD. Rollback iniciado..."
-              docker compose down || true
+              docker compose stop auth-api || true
+              docker compose rm -f auth-api || true
               docker tag apis-auth-api-backup:latest apis-auth-api:latest
-              docker run -d --name apis-auth-api:latest apis-auth-api-backup:latest
+              docker run -d --name auth-api apis-auth-api:latest
               echo "Rollback PROD concluído."
               exit 1
             fi
+          debug: true
