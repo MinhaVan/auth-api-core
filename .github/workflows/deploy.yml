@@ -42,10 +42,12 @@ jobs:
           dotnet test Auth.Tests/Auth.Tests.csproj \
             --no-build \
             --configuration Release \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=./TestResults/coverage.cobertura.xml \
-            /p:Exclude="[*.Migrations]*"
+            --collect:"XPlat Code Coverage"
+
+      - name: Move coverage file
+        run: |
+          mkdir -p TestResults
+          cp $(find . -name 'coverage.cobertura.xml') TestResults/coverage.cobertura.xml
 
       - name: Build
         run: dotnet build
