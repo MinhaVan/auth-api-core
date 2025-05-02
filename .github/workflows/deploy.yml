@@ -39,7 +39,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          dotnet test \
+          dotnet test Auth.Tests/Auth.Tests.csproj \
             --no-build \
             --configuration Release \
             /p:CollectCoverage=true \
