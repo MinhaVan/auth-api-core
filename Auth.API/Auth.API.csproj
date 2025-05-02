@@ -31,5 +31,8 @@
 
   <ItemGroup>
     <None Update="Migrations/**/*.*">
+      <SonarQubeExclude>true</SonarQubeExclude>
+    </None>
   </ItemGroup>
+
 </Project>
