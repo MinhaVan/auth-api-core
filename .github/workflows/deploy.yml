@@ -22,15 +22,6 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Install dotnet-ef tool
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Add dotnet tools to PATH
-        run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
-
-      - name: Run EF Core Migrations
-        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Development
-
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -43,6 +34,7 @@ jobs:
 
             cd ./auth-api-core
             git fetch origin && git checkout develop && git pull
+            dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj
 
             cd ../infra
             git fetch origin && git checkout develop && git pull
