@@ -29,13 +29,11 @@ jobs:
           username: ${{ secrets.VPS_DEV_USER }}
           key: ${{ secrets.VPS_DEV_SSH_KEY }}
           script: |
-            export PATH=$PATH:/usr/share/dotnet
             set -e
             cd deploy/dev/
 
             cd ./auth-api-core
             git fetch origin && git checkout develop && git pull
-            dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj
 
             cd ../infra
             git fetch origin && git checkout develop && git pull
