@@ -1,24 +1,8 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using Auth.Domain.Enums;
 
 namespace Auth.Domain.ViewModels.Usuario;
 
 [ExcludeFromCodeCoverage]
-public class UsuarioDetalheViewModel
+public class UsuarioDetalheViewModel : UsuarioViewModel
 {
-    public int Id { get; set; }
-    public string CPF { get; set; }
-    public string Contato { get; set; }
-    public string Email { get; set; }
-    public string PrimeiroNome { get; set; }
-    public string UltimoNome { get; set; }
-    public PerfilEnum Perfil { get; set; }
-    public int PlanoId { get; set; }
-    public bool UsuarioValidado { get; set; }
-    public int? EnderecoPrincipalId { get; set; }
-    public string Senha { get; set; }
-    public string RefreshToken { get; set; }
-    public DateTime RefreshTokenExpiryTime { get; set; }
-    public int EmpresaId { get; set; }
 }

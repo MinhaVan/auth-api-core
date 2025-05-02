@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace Auth.API;
 
 [ExcludeFromCodeCoverage]
-public class Program
+public static class Program
 {
     private static void Main(string[] args)
     {
