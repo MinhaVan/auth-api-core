@@ -29,10 +29,7 @@ jobs:
         run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Run EF Core Migrations
-        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
-
-      - name: Run EF Core Migrations
-        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
+        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Development
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
