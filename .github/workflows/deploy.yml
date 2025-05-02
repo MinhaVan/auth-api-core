@@ -48,7 +48,7 @@ jobs:
       - name: Move coverage file
         run: |
           mkdir -p TestResults
-          cp $(find ./TestResults -name 'coverage.cobertura.xml') TestResults/coverage.cobertura.xml
+          find ./TestResults -name 'coverage.cobertura.xml' -exec cp {} TestResults/coverage.cobertura.xml \;
 
       - name: Build
         run: dotnet build
