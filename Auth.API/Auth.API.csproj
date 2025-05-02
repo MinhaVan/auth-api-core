@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Auth.Application\Auth.Application.csproj" />
     <ProjectReference Include="..\Auth.Domain\Auth.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Migrations/**/*.*">
+  </ItemGroup>
 </Project>

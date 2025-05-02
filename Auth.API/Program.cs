@@ -12,8 +12,10 @@ using Prometheus;
 using Newtonsoft.Json;
 
 
+namespace Auth.API;
+
 [ExcludeFromCodeCoverage]
-internal class Program
+public class Program
 {
     private static void Main(string[] args)
     {
