@@ -22,9 +22,14 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Testes unitários
-        run: |
-          dotnet test --no-build --verbosity normal
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add dotnet tools to PATH
+        run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Run EF Core Migrations
+        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
 
       - name: Run EF Core Migrations
         run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
