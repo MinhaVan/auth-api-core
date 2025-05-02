@@ -47,20 +47,19 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth.API v1"));
 }
-
-#if !DEBUG
-app.UsePathBase("/auth");
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+else
 {
-    c.SwaggerEndpoint("/auth/swagger/v1/swagger.json", "Auth.API v1");
-    c.RoutePrefix = "swagger";
-});
-#else
-app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth.API v1"));
-#endif
+    app.UsePathBase("/auth");
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/auth/swagger/v1/swagger.json", "Auth.API v1");
+        c.RoutePrefix = "swagger";
+    });
+}
 
 app.UseResponseCompression();
 app.UseRouting();
