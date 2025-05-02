@@ -32,7 +32,6 @@ public class UsuarioServiceTest
     private readonly Mock<IBaseRepository<Motorista>> _motoristaRepositoryMock = new();
     private readonly Mock<IUserContext> _userContextMock = new();
     private readonly Mock<ITokenService> _tokenServiceMock = new();
-
     private readonly UsuarioService _usuarioService;
 
     public UsuarioServiceTest()
@@ -65,7 +64,7 @@ public class UsuarioServiceTest
         var result = await _usuarioService.BuscarPaginadoAsync(1, 10);
 
         // Assert
-        Assert.Equal(mappedResult.Data.Count(), result.Data.Count());
+        Assert.Equal(mappedResult.Data.Count, result.Data.Count);
         _usuarioRepositoryMock.Verify(repo => repo.BuscarPaginadoAsync(1, 10, It.IsAny<Expression<Func<Usuario, bool>>>()), Times.Once);
     }
 

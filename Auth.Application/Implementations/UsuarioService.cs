@@ -5,7 +5,6 @@ using Auth.Domain.Interfaces.Repository;
 using Auth.Domain.Models;
 using Auth.Domain.ViewModels;
 using Auth.Domain.Interfaces.Services;
-using System.Security.Cryptography;
 using System.Linq;
 using Auth.Domain.Enums;
 using Auth.Service.Exceptions;
