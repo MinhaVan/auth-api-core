@@ -41,6 +41,8 @@ jobs:
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.cobertura.xml"
+            /d:sonar.coverageReportPaths="TestResults/coverage.cobertura.xml"
+            /d:sonar.verbose=true
 
       - name: Run tests with coverage
         run: |
