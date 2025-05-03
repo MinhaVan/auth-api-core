@@ -28,17 +28,6 @@ jobs:
       - name: Build project
         run: dotnet build --no-incremental
 
-      - name: Begin Sonar Analysis
-        run: |
-          dotnet sonarscanner begin \
-            /k:"auth-api-core" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
-            /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="**Test*.cs" \
-            /d:sonar.testExecutionReportPaths="./TestResults/test-execution.xml"
-
       - name: Run tests with coverage
         run: |
           dotnet test Auth.Tests/Auth.Tests.csproj \
@@ -46,6 +35,17 @@ jobs:
             /p:CoverletOutputFormat=opencover \
             --results-directory ./TestResults \
             --logger "trx;LogFileName=test-execution.xml"
+
+      - name: Begin Sonar Analysis
+        run: |
+          dotnet sonarscanner begin \
+            /k:"auth-api-core" \
+            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
+            /d:sonar.exclusions="**/Migrations/**" \
+            /d:sonar.cs.opencover.reportsPaths="./TestResults/test-execution.xml" \
+            /d:sonar.coverage.exclusions="**Test*.cs" \
+            /d:sonar.testExecutionReportPaths="./TestResults/test-execution.xml"
 
       - name: Verificar arquivos em TestResults
         run: find . -name "test-execution.xml"
