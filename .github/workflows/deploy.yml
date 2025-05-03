@@ -33,8 +33,6 @@ jobs:
           dotnet test Auth.Tests/Auth.Tests.csproj \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults \
-            /p:CoverletOutput=./TestResults/coverage/ \
-            /p:CoverletOutputFormat=cobertura \
             --logger "trx;LogFileName=test-execution.xml"
 
       - name: Encontrar caminho exato do Cobertura
@@ -53,7 +51,7 @@ jobs:
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.coverage.exclusions="**Test*.cs" \
             /d:sonar.cs.coveragePlugin=cobertura \
-            /d:sonar.coverageReportPaths="./TestResults/coverage/coverage.cobertura.xml"
+            /d:sonar.coverageReportPaths="${{ env.COVERAGE_FILE }}"
 
       - name: List coverage files
         run: find . -name "coverage.opencover.xml"
