@@ -33,6 +33,7 @@ jobs:
           dotnet test Auth.Tests/Auth.Tests.csproj \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=./TestResults/coverage/ \
             --results-directory ./TestResults \
             --logger "trx;LogFileName=test-execution.xml"
 
@@ -43,8 +44,11 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/*/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**Test*.cs"
+
+      - name: List coverage files
+        run: find . -name "coverage.opencover.xml"
 
       - name: Verificar arquivos em TestResults
         run: find . -name "test-execution.xml"
