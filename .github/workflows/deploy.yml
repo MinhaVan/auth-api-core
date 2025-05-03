@@ -41,7 +41,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          dotnet test Math.Test/Math.Test.csproj \
+          dotnet test Auth.Tests/Auth.Tests.csproj \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=opencover \
             --results-directory ./TestResults \
