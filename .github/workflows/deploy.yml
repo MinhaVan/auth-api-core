@@ -35,10 +35,16 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
+            /d:sonar.coverage.exclusions="**Test*.cs" \
+            /d:sonar.testExecutionReportPaths="**/TestResults/*/test-execution.xml"
 
       - name: Run tests with coverage
-        run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults /p:CoverletOutputFormat=cobertura
+        run: |
+          dotnet test Math.Test/Math.Test.csproj \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            --results-directory ./TestResults
 
       - name: Build
         run: dotnet build
