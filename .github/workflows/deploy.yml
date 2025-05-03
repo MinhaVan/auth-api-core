@@ -37,14 +37,15 @@ jobs:
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**Test*.cs" \
-            /d:sonar.testExecutionReportPaths="**/TestResults/*/test-execution.xml"
+            /d:sonar.testExecutionReportPaths="**/TestResults/test-execution.xml"
 
       - name: Run tests with coverage
         run: |
-          dotnet test Auth.Tests/Auth.Tests.csproj \
+          dotnet test Math.Test/Math.Test.csproj \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=opencover \
-            --results-directory ./TestResults
+            --results-directory ./TestResults \
+            --logger "trx;LogFileName=test-execution.xml"
 
       - name: Build
         run: dotnet build
@@ -85,69 +86,6 @@ jobs:
               docker tag apis-auth-api-dev-backup:latest apis-auth-api-dev:latest
               docker run -d --name auth-api-dev apis-auth-api-dev:latest
               echo "Rollback DEV concluído."
-              exit 1
-            fi
-          debug: true
-
-  deploy-prod:
-    if: github.ref == 'refs/heads/main'
-    concurrency:
-      group: ${{ github.repository }}-deploy-prod
-      cancel-in-progress: false
-    needs: deploy-dev
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://seu-site-prod.com
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configurar .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "9.0.x"
-
-      - name: Testes unitários
-        run: |
-          dotnet test --no-build --verbosity normal
-
-      - name: Run EF Core Migrations
-        run: dotnet ef database update --project Auth.API/Auth.API.csproj --startup-project Auth.API/Auth.API.csproj --configuration Release
-
-      - name: SSH Deploy PROD
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.VPS_PROD_HOST }}
-          username: ${{ secrets.VPS_PROD_USER }}
-          key: ${{ secrets.VPS_PROD_SSH_KEY }}
-          script: |
-            set -e
-            cd deploy/prod/
-
-            cd ./auth-api-core
-            git fetch origin && git checkout main && git pull
-
-            cd ../infra
-            git fetch origin && git checkout main && git pull
-
-            cd ./APIs
-            docker compose stop auth-api || true
-            docker compose rm -f auth-api || true
-            docker rmi apis-auth-api:latest || true
-
-            docker compose build auth-api
-
-            if docker compose up -d auth-api; then
-              echo "Deploy PROD com sucesso! Salvando imagem de backup..."
-              docker tag apis-auth-api:latest apis-auth-api-backup:latest
-            else
-              echo "Erro no deploy PROD. Rollback iniciado..."
-              docker compose stop auth-api || true
-              docker compose rm -f auth-api || true
-              docker tag apis-auth-api-backup:latest apis-auth-api:latest
-              docker run -d --name auth-api apis-auth-api:latest
-              echo "Rollback PROD concluído."
               exit 1
             fi
           debug: true
