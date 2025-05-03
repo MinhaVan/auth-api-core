@@ -50,7 +50,7 @@ jobs:
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.coverage.exclusions="**Test*.cs" \
-            /d:sonar.cs.coveragePlugin=cobertura \
+            /d:sonar.cs.coveragePlugin=opencover \
             /d:sonar.coverageReportPaths="${{ env.COVERAGE_FILE }}"
 
       - name: List coverage files
@@ -58,6 +58,9 @@ jobs:
 
       - name: Verificar arquivos em TestResults
         run: find . -name "test-execution.xml"
+
+      - name: Verificar arquivo de cobertura
+        run: echo "COVERAGE_FILE=${{ env.COVERAGE_FILE }}"
 
       - name: Build
         run: dotnet build
