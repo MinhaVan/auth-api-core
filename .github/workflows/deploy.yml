@@ -30,10 +30,11 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          dotnet test Auth.Tests/Auth.Tests.csproj \
-            --collect:"XPlat Code Coverage" \
-            --results-directory ./TestResults \
-            --logger "trx;LogFileName=test-execution.xml"
+          dotnet test --collect:"XPlat Code Coverage" --logger "trx;LogFileName=TestResults.trx"
+
+      - name: Generate coverage
+        run: |
+          dotnet reportgenerator -reports:TestResults/*.trx -targetdir:coverage -reporttypes:opencover
 
       - name: Verificar arquivo de cobertura
         run: echo "COVERAGE_FILE=${{ env.COVERAGE_FILE }}"
