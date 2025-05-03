@@ -35,6 +35,9 @@ jobs:
             --results-directory ./TestResults \
             --logger "trx;LogFileName=test-execution.xml"
 
+      - name: Verificar arquivo de cobertura
+        run: echo "COVERAGE_FILE=${{ env.COVERAGE_FILE }}"
+
       - name: Encontrar caminho exato do Cobertura
         id: cobertura
         run: |
