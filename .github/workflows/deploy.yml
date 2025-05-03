@@ -33,13 +33,16 @@ jobs:
           dotnet test Auth.Tests/Auth.Tests.csproj \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults \
+            /p:CoverletOutput=./TestResults/coverage/ \
+            /p:CoverletOutputFormat=cobertura \
             --logger "trx;LogFileName=test-execution.xml"
 
-      - name: Verificar arquivos TRX e XML
-        run: find ./TestResults -type f
-
-      - name: Verificar arquivos de cobertura
-        run: find ./TestResults -name "coverage.cobertura.xml"
+      - name: Encontrar caminho exato do Cobertura
+        id: cobertura
+        run: |
+          COVERAGE_FILE=$(find ./TestResults -name 'coverage.cobertura.xml' | head -n 1)
+          echo "COVERAGE_FILE=$COVERAGE_FILE" >> $GITHUB_ENV
+          echo "coverage path: $COVERAGE_FILE"
 
       - name: Begin Sonar Analysis
         run: |
@@ -50,7 +53,7 @@ jobs:
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.coverage.exclusions="**Test*.cs" \
             /d:sonar.cs.coveragePlugin=cobertura \
-            /d:sonar.coverageReportPaths=./TestResults/**/coverage.cobertura.xml
+            /d:sonar.coverageReportPaths="./TestResults/coverage/coverage.cobertura.xml"
 
       - name: List coverage files
         run: find . -name "coverage.opencover.xml"
