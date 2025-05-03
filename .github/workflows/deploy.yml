@@ -44,8 +44,7 @@ jobs:
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
             /d:sonar.cs.opencover.reportsPaths="./TestResults/*/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="**Test*.cs" \
-            /d:sonar.testExecutionReportPaths="./TestResults/test-execution.xml"
+            /d:sonar.coverage.exclusions="**Test*.cs"
 
       - name: Verificar arquivos em TestResults
         run: find . -name "test-execution.xml"
