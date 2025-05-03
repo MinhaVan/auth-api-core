@@ -31,11 +31,15 @@ jobs:
       - name: Run tests with coverage
         run: |
           dotnet test Auth.Tests/Auth.Tests.csproj \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=opencover \
-            /p:CoverletOutput=./TestResults/coverage/ \
+            --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults \
             --logger "trx;LogFileName=test-execution.xml"
+
+      - name: Verificar arquivos TRX e XML
+        run: find ./TestResults -type f
+
+      - name: Verificar arquivos de cobertura
+        run: find ./TestResults -name "coverage.cobertura.xml"
 
       - name: Begin Sonar Analysis
         run: |
@@ -44,8 +48,9 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="**Test*.cs"
+            /d:sonar.coverage.exclusions="**Test*.cs" \
+            /d:sonar.cs.coveragePlugin=cobertura \
+            /d:sonar.coverageReportPaths=./TestResults/**/coverage.cobertura.xml
 
       - name: List coverage files
         run: find . -name "coverage.opencover.xml"
