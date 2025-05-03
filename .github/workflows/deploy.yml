@@ -43,7 +43,7 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/test-execution.xml" \
+            /d:sonar.cs.opencover.reportsPaths="./TestResults/*/coverage.opencover.xml" \
             /d:sonar.coverage.exclusions="**Test*.cs" \
             /d:sonar.testExecutionReportPaths="./TestResults/test-execution.xml"
 
