@@ -56,7 +56,7 @@ public static class Program
         var app = builder.Build();
 
         // Configurações específicas para desenvolvimento
-        if (app.Environment.IsDevelopment())
+        if (environment == "local")
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
@@ -66,8 +66,10 @@ public static class Program
         {
             using (var scope = app.Services.CreateScope())
             {
+                Console.WriteLine($"Rodando migrations '{environment}'");
                 var db = scope.ServiceProvider.GetRequiredService<APIContext>();
                 db.Database.Migrate();
+                Console.WriteLine($"Migrations '{environment}' executadas com sucesso");
             }
 
             app.UsePathBase("/auth");
