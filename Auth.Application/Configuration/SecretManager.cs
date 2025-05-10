@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 
 namespace Auth.Service.Configuration;
 
@@ -12,7 +13,13 @@ public class SecretManager
     public Logging Logging { get; set; }
     public TokenConfigurations TokenConfigurations { get; set; }
     public Google Google { get; set; }
+    public URL URL { get; set; }
     public string AllowedHosts { get; set; }
+}
+
+public class URL
+{
+    public string RoutesAPI { get; set; }
 }
 
 [ExcludeFromCodeCoverage]

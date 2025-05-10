@@ -10,6 +10,7 @@ using Auth.Domain.Enums;
 using Auth.Service.Exceptions;
 using Auth.Domain.Interfaces.Repositories;
 using static Auth.Domain.Constantes.Contantes;
+using Auth.Domain.Interfaces.APIs;
 
 namespace Auth.Service.Implementations;
 
@@ -17,6 +18,7 @@ public class UsuarioService : IUsuarioService
 {
     private readonly IAmazonService _amazonService;
     private readonly IRedisRepository _redisRepository;
+    private readonly IRoutesAPI _routesAPI;
     private readonly IMapper _mapper;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IBaseRepository<UsuarioPermissao> _usuarioPermissaoRepository;
@@ -26,6 +28,7 @@ public class UsuarioService : IUsuarioService
     private readonly ITokenService _tokenService;
     public UsuarioService(
         IUsuarioRepository repo,
+        IRoutesAPI routesAPI,
         IUserContext userContext,
         ITokenService ServiceToken,
         IAmazonService amazonService,
@@ -42,6 +45,7 @@ public class UsuarioService : IUsuarioService
         _redisRepository = redisRepository;
         _userContext = userContext;
         _mapper = map;
+        _routesAPI = routesAPI;
         _usuarioRepository = repo;
         _tokenService = ServiceToken;
     }
@@ -104,7 +108,7 @@ public class UsuarioService : IUsuarioService
 
     public async Task Atualizar(UsuarioAtualizarViewModel user)
     {
-        var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == user.Id/*,  x => x.Alunos */);
+        var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == user.Id);
         var isMotorista = user.Perfil == PerfilEnum.Motorista;
 
         var chaveLogin = string.Format(Cache.ChaveLogin, model.CPF, model.Email, model.Senha, model.EmpresaId, isMotorista);
@@ -134,13 +138,14 @@ public class UsuarioService : IUsuarioService
 
     public async Task<UsuarioViewModel> ObterPorId(int userId)
     {
+        var enderecoResponse = await _routesAPI.ObterEnderecosAsync();
         var model = await _usuarioRepository.BuscarUmAsync(x =>
             x.Id == userId,
-            // x => x.Alunos,
-            x => x.Enderecos,
             x => x.Motorista);
 
-        return _mapper.Map<UsuarioViewModel>(model);
+        var dto = _mapper.Map<UsuarioViewModel>(model);
+        dto.Enderecos = enderecoResponse.Data;
+        return dto;
     }
 
     public async Task<UsuarioViewModel> ObterDadosDoUsuario()

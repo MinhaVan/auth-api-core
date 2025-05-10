@@ -15,14 +15,5 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         modelBuilder.HasOne(x => x.Empresa)
             .WithMany(y => y.Usuarios)
             .HasForeignKey(x => x.EmpresaId);
-
-        modelBuilder.HasMany(x => x.Enderecos)
-            .WithOne(x => x.Usuario)
-            .HasForeignKey(x => x.UsuarioId);
-
-        modelBuilder.HasOne(x => x.EnderecoPrincipal)
-            .WithMany()
-            .HasForeignKey(x => x.EnderecoPrincipalId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

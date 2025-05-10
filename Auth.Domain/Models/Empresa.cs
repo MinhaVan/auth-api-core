@@ -13,6 +13,5 @@ public class Empresa : Entity
     public string RazaoSocial { get; set; }
     public string Apelido { get; set; }
     //
-    public virtual List<Endereco> Enderecos { get; set; }
     public virtual List<Usuario> Usuarios { get; set; }
 }

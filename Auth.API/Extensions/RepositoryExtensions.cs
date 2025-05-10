@@ -2,10 +2,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Auth.Data.Implementations;
 using Auth.Data.Repositories;
+using Auth.Domain.Interfaces.APIs;
 using Auth.Domain.Interfaces.Repositories;
 using Auth.Domain.Interfaces.Repository;
 using Auth.Domain.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Routes.Data.APIs;
 
 namespace Auth.API.Extensions;
 
@@ -19,7 +21,6 @@ public static class RepositoryExtensions
 
         // Repositories
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-        services.AddScoped<IBaseRepository<Endereco>, BaseRepository<Endereco>>();
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
         services.AddScoped<IBaseRepository<Empresa>, BaseRepository<Empresa>>();
         services.AddScoped<IBaseRepository<UsuarioPermissao>, BaseRepository<UsuarioPermissao>>();

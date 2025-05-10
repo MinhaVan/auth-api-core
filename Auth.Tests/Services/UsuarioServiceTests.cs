@@ -18,6 +18,7 @@ using System.Linq;
 using Auth.Service.Configurations;
 using Auth.Service.Configuration;
 using Auth.Tests.Fixtures;
+using Auth.Domain.Interfaces.APIs;
 
 namespace Auth.Tests.Services;
 
@@ -32,12 +33,14 @@ public class UsuarioServiceTest
     private readonly Mock<IBaseRepository<Motorista>> _motoristaRepositoryMock = new();
     private readonly Mock<IUserContext> _userContextMock = new();
     private readonly Mock<ITokenService> _tokenServiceMock = new();
+    private readonly Mock<IRoutesAPI> _routesAPIMock = new();
     private readonly UsuarioService _usuarioService;
 
     public UsuarioServiceTest()
     {
         _usuarioService = new UsuarioService(
             _usuarioRepositoryMock.Object,
+            _routesAPIMock.Object,
             _userContextMock.Object,
             _tokenServiceMock.Object,
             _amazonServiceMock.Object,
