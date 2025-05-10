@@ -10,6 +10,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Prometheus;
 using Newtonsoft.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Auth.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Auth.API;
@@ -61,6 +64,12 @@ public static class Program
         }
         else
         {
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<APIContext>();
+                db.Database.Migrate();
+            }
+
             app.UsePathBase("/auth");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
