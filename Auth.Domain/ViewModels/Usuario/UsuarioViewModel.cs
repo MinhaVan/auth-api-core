@@ -24,7 +24,6 @@ public class UsuarioViewModel
     public DateTime RefreshTokenExpiryTime { get; set; }
     public int EmpresaId { get; set; }
 
-    public virtual IList<AlunoViewModel> Alunos { get; set; }
     public virtual IList<EnderecoViewModel> Enderecos { get; set; } = new List<EnderecoViewModel>();
     public virtual EnderecoViewModel EnderecoPrincipal { get; set; } = new EnderecoViewModel();
     public virtual MotoristaViewModel Motorista { get; set; }

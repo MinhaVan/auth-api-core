@@ -103,7 +103,7 @@ public class UsuarioService : IUsuarioService
 
     public async Task Atualizar(UsuarioAtualizarViewModel user)
     {
-        var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == user.Id, x => x.Alunos);
+        var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == user.Id/*,  x => x.Alunos */);
         var isMotorista = user.Perfil == PerfilEnum.Motorista;
 
         var chaveLogin = string.Format(Cache.ChaveLogin, model.CPF, model.Email, model.Senha, model.EmpresaId, isMotorista);
@@ -135,7 +135,7 @@ public class UsuarioService : IUsuarioService
     {
         var model = await _usuarioRepository.BuscarUmAsync(x =>
             x.Id == userId,
-            x => x.Alunos,
+            // x => x.Alunos,
             x => x.Enderecos,
             x => x.Motorista);
 

@@ -34,7 +34,6 @@ public class APIContext : DbContext
         modelBuilder.ApplyConfiguration(new MotoristaConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoConfiguration());
         modelBuilder.ApplyConfiguration(new PermissaoConfiguration());
-        modelBuilder.ApplyConfiguration(new AlunoConfiguration());
         modelBuilder.ApplyConfiguration(new UsuarioPermissaoConfiguration());
 
         base.OnModelCreating(modelBuilder);
@@ -58,7 +57,6 @@ public class APIContext : DbContext
     }
 
     public DbSet<Usuario> Usuarios { get; set; }
-    public DbSet<Aluno> Alunos { get; set; }
     public DbSet<Endereco> Enderecos { get; set; }
     public DbSet<Motorista> Motoristas { get; set; }
     public DbSet<Permissao> Permissoes { get; set; }

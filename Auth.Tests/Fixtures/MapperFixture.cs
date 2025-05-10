@@ -9,7 +9,7 @@ public static class MapperFixture
     {
         var config = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<AlunoMapper>();
+            // cfg.AddProfile<AlunoMapper>();
             cfg.AddProfile<EnderecoMapper>();
             cfg.AddProfile<PaginadoMapper>();
             cfg.AddProfile<TokenMapper>();

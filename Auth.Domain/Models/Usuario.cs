@@ -24,7 +24,6 @@ public class Usuario : Entity
     public int? EnderecoPrincipalId { get; set; }
     //
     public virtual IList<UsuarioPermissao> Permissoes { get; set; } = new List<UsuarioPermissao>();
-    public virtual IList<Aluno> Alunos { get; set; } = new List<Aluno>();
     public virtual IList<Endereco> Enderecos { get; set; } = new List<Endereco>();
     public virtual Endereco EnderecoPrincipal { get; set; } = new Endereco();
     public virtual Empresa Empresa { get; set; }

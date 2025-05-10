@@ -15,5 +15,4 @@ public class Empresa : Entity
     //
     public virtual List<Endereco> Enderecos { get; set; }
     public virtual List<Usuario> Usuarios { get; set; }
-    public virtual List<Aluno> Alunos { get; set; }
 }
