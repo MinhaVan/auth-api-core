@@ -30,21 +30,12 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          dotnet test --collect:"XPlat Code Coverage" --logger "trx;LogFileName=TestResults.trx"
-
-      - name: Generate coverage
-        run: |
-          dotnet reportgenerator -reports:TestResults/*.trx -targetdir:coverage -reporttypes:opencover
-
-      - name: Verificar arquivo de cobertura
-        run: echo "COVERAGE_FILE=${{ env.COVERAGE_FILE }}"
-
-      - name: Encontrar caminho exato do Cobertura
-        id: cobertura
-        run: |
-          COVERAGE_FILE=$(find ./TestResults -name 'coverage.cobertura.xml' | head -n 1)
-          echo "COVERAGE_FILE=$COVERAGE_FILE" >> $GITHUB_ENV
-          echo "coverage path: $COVERAGE_FILE"
+          dotnet test Auth.Tests/Auth.Tests.csproj \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput=./TestResults/coverage/ \
+            --results-directory ./TestResults \
+            --logger "trx;LogFileName=test-execution.xml"
 
       - name: Begin Sonar Analysis
         run: |
@@ -53,18 +44,14 @@ jobs:
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
             /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.coverage.exclusions="**Test*.cs" \
-            /d:sonar.cs.coveragePlugin=opencover \
-            /d:sonar.coverageReportPaths="${{ env.COVERAGE_FILE }}"
+            /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage/coverage.opencover.xml" \
+            /d:sonar.coverage.exclusions="**Test*.cs"
 
       - name: List coverage files
         run: find . -name "coverage.opencover.xml"
 
       - name: Verificar arquivos em TestResults
         run: find . -name "test-execution.xml"
-
-      - name: Verificar arquivo de cobertura
-        run: echo "COVERAGE_FILE=${{ env.COVERAGE_FILE }}"
 
       - name: Build
         run: dotnet build
