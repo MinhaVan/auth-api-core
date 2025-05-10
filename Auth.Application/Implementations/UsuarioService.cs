@@ -81,7 +81,8 @@ public class UsuarioService : IUsuarioService
 
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
-        model.UsuarioValidado = false;
+        model.UsuarioValidado = true;
+        model.EnderecoPrincipalId = null;
 
         await _usuarioRepository.AdicionarAsync(model);
         if (user.IsMotorista)
