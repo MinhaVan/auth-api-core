@@ -9,7 +9,6 @@ namespace Auth.API.Controllers.v1;
 
 [ApiController]
 [Route("v1/[controller]")]
-[Authorize("Bearer")]
 [ExcludeFromCodeCoverage]
 public class EmpresaController : BaseController
 {
