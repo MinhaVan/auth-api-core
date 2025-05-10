@@ -72,7 +72,6 @@ public static class Program
                 Console.WriteLine($"Migrations '{environment}' executadas com sucesso");
             }
 
-            app.UsePathBase("/auth");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
