@@ -21,6 +21,7 @@ public static class RepositoryExtensions
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IBaseRepository<Endereco>, BaseRepository<Endereco>>();
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IBaseRepository<Empresa>, BaseRepository<Empresa>>();
         services.AddScoped<IBaseRepository<UsuarioPermissao>, BaseRepository<UsuarioPermissao>>();
         services.AddScoped<IBaseRepository<Permissao>, BaseRepository<Permissao>>();
         services.AddScoped<IBaseRepository<Aluno>, BaseRepository<Aluno>>();

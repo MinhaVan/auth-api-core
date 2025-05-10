@@ -25,6 +25,7 @@ public static class ServiceExtensions
         services.AddScoped<IAmazonService, AmazonService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
+        services.AddScoped<IEmpresaService, EmpresaService>();
 
         Console.WriteLine("Configuração das services realizada com sucesso!");
 
