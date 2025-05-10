@@ -30,7 +30,7 @@ public class EmpresaService : IEmpresaService
     {
         var model = _mapper.Map<Empresa>(empresa);
         await _empresaRepository.AdicionarAsync(model);
-        var viewModel = _mapper.Map<EmpresaViewModel>(empresa);
+        var viewModel = _mapper.Map<EmpresaViewModel>(model);
         return viewModel;
     }
 

@@ -261,6 +261,9 @@ public class UsuarioService : IUsuarioService
     public async Task ConfirmarCadastroAsync(int userId)
     {
         var usuario = await _usuarioRepository.BuscarUmAsync(x => x.Id == userId);
+        if (usuario is null)
+            throw new BusinessRuleException($"Usuário não encontrado para o identificador '{userId}'!");
+
         if (usuario.UsuarioValidado == false)
         {
             usuario.UsuarioValidado = true;
