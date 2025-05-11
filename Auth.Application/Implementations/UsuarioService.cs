@@ -9,7 +9,6 @@ using System.Linq;
 using Auth.Domain.Enums;
 using Auth.Service.Exceptions;
 using Auth.Domain.Interfaces.Repositories;
-using static Auth.Domain.Constantes.Contantes;
 using Auth.Domain.Interfaces.APIs;
 
 namespace Auth.Service.Implementations;
@@ -17,7 +16,6 @@ namespace Auth.Service.Implementations;
 public class UsuarioService : IUsuarioService
 {
     private readonly IAmazonService _amazonService;
-    private readonly IRedisRepository _redisRepository;
     private readonly IRoutesAPI _routesAPI;
     private readonly IMapper _mapper;
     private readonly IUsuarioRepository _usuarioRepository;
@@ -34,7 +32,6 @@ public class UsuarioService : IUsuarioService
         IAmazonService amazonService,
         IBaseRepository<UsuarioPermissao> usuarioPermissaoRepository,
         IPermissaoRepository permissaoRepository,
-        IRedisRepository redisRepository,
         IBaseRepository<Motorista> motoristaRepository,
         IMapper map)
     {
@@ -42,7 +39,6 @@ public class UsuarioService : IUsuarioService
         _motoristaRepository = motoristaRepository;
         _permissaoRepository = permissaoRepository;
         _usuarioPermissaoRepository = usuarioPermissaoRepository;
-        _redisRepository = redisRepository;
         _userContext = userContext;
         _mapper = map;
         _routesAPI = routesAPI;
@@ -111,12 +107,12 @@ public class UsuarioService : IUsuarioService
         var model = await _usuarioRepository.BuscarUmAsync(x => x.Id == user.Id);
         var isMotorista = user.Perfil == PerfilEnum.Motorista;
 
-        var chaveLogin = string.Format(Cache.ChaveLogin, model.CPF, model.Email, model.Senha, model.EmpresaId, isMotorista);
-        var chaveBuscarPorCpfEmpresa = string.Format(Cache.ChaveBuscarPorCpfEmpresa, model.CPF, model.EmpresaId);
-        await Task.WhenAll(
-            _redisRepository.RemoveAsync(chaveLogin),
-            _redisRepository.RemoveAsync(chaveBuscarPorCpfEmpresa)
-        );
+        // var chaveLogin = string.Format(Cache.ChaveLogin, model.CPF, model.Email, model.Senha, model.EmpresaId, isMotorista);
+        // var chaveBuscarPorCpfEmpresa = string.Format(Cache.ChaveBuscarPorCpfEmpresa, model.CPF, model.EmpresaId);
+        // await Task.WhenAll(
+        //     _redisRepository.RemoveAsync(chaveLogin),
+        //     _redisRepository.RemoveAsync(chaveBuscarPorCpfEmpresa)
+        // );
 
         model.CPF = user.CPF;
         model.Email = user.Email;

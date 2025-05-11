@@ -34,12 +34,7 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddCache(this IServiceCollection services, SecretManager secretManager)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(secretManager));
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-        {
-            var configuration = secretManager.ConnectionStrings.RedisConnection;
-            return ConnectionMultiplexer.Connect(configuration);
-        });
+        // Console.WriteLine(JsonConvert.SerializeObject(secretManager));
 
         Console.WriteLine("Configuração do Redis realizada com sucesso!");
 

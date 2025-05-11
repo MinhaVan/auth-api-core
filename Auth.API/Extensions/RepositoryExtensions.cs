@@ -25,7 +25,6 @@ public static class RepositoryExtensions
         services.AddScoped<IBaseRepository<Empresa>, BaseRepository<Empresa>>();
         services.AddScoped<IBaseRepository<UsuarioPermissao>, BaseRepository<UsuarioPermissao>>();
         services.AddScoped<IBaseRepository<Permissao>, BaseRepository<Permissao>>();
-        services.AddScoped<IRedisRepository, RedisRepository>();
         services.AddScoped<IPermissaoRepository, PermissaoRepository>();
 
         Console.WriteLine("Configuração de repository realizada com sucesso!");

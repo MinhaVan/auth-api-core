@@ -25,7 +25,6 @@ namespace Auth.Tests.Services;
 public class UsuarioServiceTest
 {
     private readonly Mock<Domain.Interfaces.Services.IAmazonService> _amazonServiceMock = new();
-    private readonly Mock<IRedisRepository> _redisRepositoryMock = new();
     private readonly IMapper _mapper = MapperFixture.Get();
     private readonly Mock<IUsuarioRepository> _usuarioRepositoryMock = new();
     private readonly Mock<IBaseRepository<UsuarioPermissao>> _usuarioPermissaoRepositoryMock = new();
@@ -46,7 +45,6 @@ public class UsuarioServiceTest
             _amazonServiceMock.Object,
             _usuarioPermissaoRepositoryMock.Object,
             _permissaoRepositoryMock.Object,
-            _redisRepositoryMock.Object,
             _motoristaRepositoryMock.Object,
             _mapper
         );
@@ -122,7 +120,6 @@ public class UsuarioServiceTest
 
         // Assert
         _usuarioRepositoryMock.Verify(repo => repo.AtualizarAsync(It.Is<Usuario>(u => u.Email == "test@example.com")), Times.Once);
-        _redisRepositoryMock.Verify(repo => repo.RemoveAsync(It.IsAny<string>()), Times.Exactly(2));
     }
 
     [Fact]
