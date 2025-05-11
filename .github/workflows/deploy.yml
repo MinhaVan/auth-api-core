@@ -30,11 +30,11 @@ jobs:
 
       - name: Tag image for private registry
         run: |
-          docker tag apis-auth-api-dev:latest ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest
+          docker tag apis-auth-api-dev:latest ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
 
-      - name: Push to private registry (HTTP - insecure)
+      - name: Push to private registry
         run: |
-          docker push ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest
+          docker push ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
@@ -55,8 +55,8 @@ jobs:
             docker compose rm -f auth-api-dev || true
 
             echo "📥 Puxando nova imagem do registry"
-            docker rmi ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest || true
-            docker pull ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest
+            docker rmi ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest || true
+            docker pull ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
 
             echo "🚀 Subindo container com nova imagem"
             docker compose up -d auth-api-dev
