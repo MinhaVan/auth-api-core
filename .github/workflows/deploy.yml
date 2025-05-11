@@ -32,9 +32,10 @@ jobs:
         run: |
           docker tag apis-auth-api-dev:latest ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
 
-      - name: Push to private registry
+      - name: Push Docker image
         run: |
-          docker push ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
+          docker tag apis-auth-api-dev:latest http://***:5000/apis-auth-api-dev:latest
+          docker push http://***:5000/apis-auth-api-dev:latest
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
