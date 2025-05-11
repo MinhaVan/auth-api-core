@@ -34,8 +34,8 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker tag apis-auth-api-dev:latest http://***:5000/apis-auth-api-dev:latest
-          docker push http://***:5000/apis-auth-api-dev:latest
+          docker tag apis-auth-api-dev:latest http://${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
+          docker push http://${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
