@@ -80,6 +80,6 @@ jobs:
             docker compose rm -f auth-api-dev || true
             docker rmi apis-auth-api-dev:latest || true
 
-            docker compose pull auth-api-dev
-            docker compose up -d auth-api-dev
+            docker compose build auth-api-dev
+            docker compose up -d auth-api-dev;
           debug: true
