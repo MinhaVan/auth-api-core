@@ -13,51 +13,22 @@ jobs:
       group: ${{ github.repository }}-deploy-dev
       cancel-in-progress: false
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Configurar .NET
-      #   uses: actions/setup-dotnet@v3
-      #   with:
-      #     dotnet-version: "9.0.x"
+      - name: Build Docker image
+        run: |
+          docker build -t apis-auth-api-dev:latest -f ./infra/APIs/auth-api-dev/Dockerfile .
 
-      # - name: Install SonarScanner
-      #   run: dotnet tool install --global dotnet-sonarscanner
+      - name: Tag image for private registry
+        run: |
+          docker tag apis-auth-api-dev:latest ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest
 
-      # - name: Build project
-      #   run: dotnet build --no-incremental
-
-      # - name: Run tests with coverage
-      #   run: |
-      #     dotnet test Auth.Tests/Auth.Tests.csproj \
-      #       /p:CollectCoverage=true \
-      #       /p:CoverletOutputFormat=opencover \
-      #       /p:CoverletOutput=./TestResults/coverage/ \
-      #       --results-directory ./TestResults \
-      #       --logger "trx;LogFileName=test-execution.xml"
-
-      # - name: Begin Sonar Analysis
-      #   run: |
-      #     dotnet sonarscanner begin \
-      #       /k:"auth-api-core" \
-      #       /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-      #       /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
-      #       /d:sonar.exclusions="**/Migrations/**" \
-      #       /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage/coverage.opencover.xml" \
-      #       /d:sonar.coverage.exclusions="**Test*.cs"
-
-      # - name: List coverage files
-      #   run: find . -name "coverage.opencover.xml"
-
-      # - name: Verificar arquivos em TestResults
-      #   run: find . -name "test-execution.xml"
-
-      # - name: Build
-      #   run: dotnet build
-
-      # - name: End Sonar Analysis
-      #   run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      - name: Push to private registry (insecure)
+        run: |
+          docker push ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
@@ -67,19 +38,20 @@ jobs:
           key: ${{ secrets.VPS_DEV_SSH_KEY }}
           script: |
             set -e
-            cd deploy/dev/
 
-            cd ./auth-api-core
+            echo "🚀 Atualizando código"
+            cd ~/deploy/dev/infra
             git fetch origin && git checkout develop && git pull
 
-            cd ../infra
-            git fetch origin && git checkout develop && git pull
-
+            echo "📦 Parando container antigo"
             cd ./APIs
             docker compose stop auth-api-dev || true
             docker compose rm -f auth-api-dev || true
-            docker rmi apis-auth-api-dev:latest || true
 
-            docker compose build auth-api-dev
-            docker compose up -d auth-api-dev;
+            echo "📥 Puxando nova imagem do registry"
+            docker rmi ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest || true
+            docker pull ${{ secrets.VPS_IP }}:5000/apis-auth-api:latest
+
+            echo "🚀 Subindo container com nova imagem"
+            docker compose up -d auth-api-dev
           debug: true
