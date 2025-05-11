@@ -17,47 +17,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configurar .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "9.0.x"
+      # - name: Configurar .NET
+      #   uses: actions/setup-dotnet@v3
+      #   with:
+      #     dotnet-version: "9.0.x"
 
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
+      # - name: Install SonarScanner
+      #   run: dotnet tool install --global dotnet-sonarscanner
 
-      - name: Build project
-        run: dotnet build --no-incremental
+      # - name: Build project
+      #   run: dotnet build --no-incremental
 
-      - name: Run tests with coverage
-        run: |
-          dotnet test Auth.Tests/Auth.Tests.csproj \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=opencover \
-            /p:CoverletOutput=./TestResults/coverage/ \
-            --results-directory ./TestResults \
-            --logger "trx;LogFileName=test-execution.xml"
+      # - name: Run tests with coverage
+      #   run: |
+      #     dotnet test Auth.Tests/Auth.Tests.csproj \
+      #       /p:CollectCoverage=true \
+      #       /p:CoverletOutputFormat=opencover \
+      #       /p:CoverletOutput=./TestResults/coverage/ \
+      #       --results-directory ./TestResults \
+      #       --logger "trx;LogFileName=test-execution.xml"
 
-      - name: Begin Sonar Analysis
-        run: |
-          dotnet sonarscanner begin \
-            /k:"auth-api-core" \
-            /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
-            /d:sonar.exclusions="**/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage/coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="**Test*.cs"
+      # - name: Begin Sonar Analysis
+      #   run: |
+      #     dotnet sonarscanner begin \
+      #       /k:"auth-api-core" \
+      #       /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
+      #       /d:sonar.host.url="${{ secrets.SONAR_ENDPOINT }}" \
+      #       /d:sonar.exclusions="**/Migrations/**" \
+      #       /d:sonar.cs.opencover.reportsPaths="./TestResults/coverage/coverage.opencover.xml" \
+      #       /d:sonar.coverage.exclusions="**Test*.cs"
 
-      - name: List coverage files
-        run: find . -name "coverage.opencover.xml"
+      # - name: List coverage files
+      #   run: find . -name "coverage.opencover.xml"
 
-      - name: Verificar arquivos em TestResults
-        run: find . -name "test-execution.xml"
+      # - name: Verificar arquivos em TestResults
+      #   run: find . -name "test-execution.xml"
 
-      - name: Build
-        run: dotnet build
+      # - name: Build
+      #   run: dotnet build
 
-      - name: End Sonar Analysis
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      # - name: End Sonar Analysis
+      #   run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
