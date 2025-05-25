@@ -49,7 +49,9 @@ jobs:
             echo "🚀 Atualizando código"
             cd ~/deploy/dev/infra
             git remote set-url origin https://${{ secrets.GIT_PAT }}@github.com/${{ github.repository }}
-            git fetch origin && git checkout develop && git pull
+            git fetch origin
+            git checkout develop
+            git reset --hard origin/develop
 
             echo "📦 Parando container antigo"
             cd ./APIs
