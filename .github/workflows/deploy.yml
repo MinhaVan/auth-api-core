@@ -48,9 +48,11 @@ jobs:
 
             export GITHUB_USER="${{ secrets.GITHUB_USER }}"
             export GIT_PAT="${{ secrets.GIT_PAT }}"
+            export IMAGE_NAME="${{ env.IMAGE_NAME }}"
 
             echo "DEBUG: GITHUB_USER='$GITHUB_USER'"
             echo "DEBUG: GIT_PAT length='${#GIT_PAT}'"
+            echo "DEBUG: IMAGE_NAME='$IMAGE_NAME'"
 
             echo "🚀 Atualizando código"
             cd ~/deploy/dev/infra
