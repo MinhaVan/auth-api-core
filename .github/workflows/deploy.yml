@@ -68,4 +68,5 @@ jobs:
 
             echo "🚀 Subindo container com nova imagem"
             docker compose up -d auth-api-dev
+
           debug: true
