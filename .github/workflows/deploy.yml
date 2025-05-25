@@ -48,7 +48,7 @@ jobs:
 
             echo "🚀 Atualizando código"
             cd ~/deploy/dev/infra
-            git remote set-url origin https://${{ secrets.GIT_PAT }}@github.com/${{ github.repository }}
+            git remote set-url origin https://github.com/MinhaVan/infra.git
             git fetch origin
             git checkout develop
             git reset --hard origin/develop
