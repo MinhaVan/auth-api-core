@@ -13,32 +13,31 @@ jobs:
       group: ${{ github.repository }}-deploy-dev
       cancel-in-progress: false
     runs-on: ubuntu-latest
+    env:
+      OWNER: ${{ github.repository_owner }}
+      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/auth-api-dev:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Configure Docker daemon to allow insecure registry
-      #   run: |
-      #     echo '{ "insecure-registries": ["${{ secrets.VPS_IP }}:5000"] }' | sudo tee /etc/docker/daemon.json
-      #     sudo service docker restart
-      #     sleep 10  # Aguarda o Docker reiniciar
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t apis-auth-api-dev:latest -f Dockerfile .
-
-      - name: Tag image for private registry
-        run: |
-          docker tag apis-auth-api-dev:latest ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
-
-      - name: Push Docker image
-        run: |
-          docker tag apis-auth-api-dev:latest ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
-          docker push ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ${{ env.IMAGE_NAME }}
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
+        env:
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
         with:
           host: ${{ secrets.VPS_DEV_HOST }}
           username: ${{ secrets.VPS_DEV_USER }}
@@ -55,9 +54,11 @@ jobs:
             docker compose stop auth-api-dev || true
             docker compose rm -f auth-api-dev || true
 
+            echo "📥 Removendo imagem antiga localmente"
+            docker rmi $IMAGE_NAME || true
+
             echo "📥 Puxando nova imagem do registry"
-            docker rmi ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest || true
-            docker pull ${{ secrets.VPS_IP }}:5000/apis-auth-api-dev:latest
+            docker pull $IMAGE_NAME
 
             echo "🚀 Subindo container com nova imagem"
             docker compose up -d auth-api-dev
