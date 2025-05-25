@@ -46,7 +46,7 @@ jobs:
           script: |
             set -xe
 
-            export GITHUB_USER="${{ secrets.GITHUB_USER }}"
+            export GITHUB_USER="zWalterli"
             export GIT_PAT="${{ secrets.GIT_PAT }}"
             export IMAGE_NAME="${{ env.IMAGE_NAME }}"
 
