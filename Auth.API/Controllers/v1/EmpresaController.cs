@@ -30,6 +30,7 @@ public class EmpresaController : BaseController
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<ActionResult<PaginadoViewModel<UsuarioViewModel>>> AdicionarAsync(
         [FromBody] EmpresaAdicionarViewModel empresa)
     {
