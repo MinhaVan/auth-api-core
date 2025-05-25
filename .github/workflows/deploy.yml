@@ -59,6 +59,8 @@ jobs:
             echo "📥 Removendo imagem antiga localmente"
             docker rmi ${{ env.IMAGE_NAME }} || true
 
+            echo "${{ secrets.GIT_PAT }}" | docker login ghcr.io -u ${{ secrets.GITHUB_USER }} --password-stdin
+
             echo "📥 Puxando nova imagem do registry"
             docker pull ${{ env.IMAGE_NAME }}
 
