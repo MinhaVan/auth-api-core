@@ -39,16 +39,15 @@ jobs:
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
-        env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GIT_PAT: ${{ secrets.GIT_PAT }}
         with:
           host: ${{ secrets.VPS_DEV_HOST }}
           username: ${{ secrets.VPS_DEV_USER }}
           key: ${{ secrets.VPS_DEV_SSH_KEY }}
           script: |
             set -xe
+
+            export GITHUB_USER="${{ secrets.GITHUB_USER }}"
+            export GIT_PAT="${{ secrets.GIT_PAT }}"
 
             echo "DEBUG: GITHUB_USER='$GITHUB_USER'"
             echo "DEBUG: GIT_PAT length='${#GIT_PAT}'"
@@ -75,4 +74,5 @@ jobs:
 
             echo "🚀 Subindo container com nova imagem"
             docker compose up -d auth-api-dev
+
           debug: true
