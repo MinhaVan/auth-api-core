@@ -13,11 +13,14 @@ jobs:
       group: ${{ github.repository }}-deploy-dev
       cancel-in-progress: false
     runs-on: ubuntu-latest
-    env:
-      OWNER: ${{ github.repository_owner }}
-      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/auth-api-dev:latest
 
     steps:
+      - name: Set lowercase OWNER and image name
+        id: vars
+        run: |
+          echo "OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/auth-api-dev:latest" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -36,8 +39,6 @@ jobs:
 
       - name: SSH Deploy DEV
         uses: appleboy/ssh-action@v0.1.10
-        env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
         with:
           host: ${{ secrets.VPS_DEV_HOST }}
           username: ${{ secrets.VPS_DEV_USER }}
@@ -55,10 +56,10 @@ jobs:
             docker compose rm -f auth-api-dev || true
 
             echo "📥 Removendo imagem antiga localmente"
-            docker rmi $IMAGE_NAME || true
+            docker rmi ${{ env.IMAGE_NAME }} || true
 
             echo "📥 Puxando nova imagem do registry"
-            docker pull $IMAGE_NAME
+            docker pull ${{ env.IMAGE_NAME }}
 
             echo "🚀 Subindo container com nova imagem"
             docker compose up -d auth-api-dev
