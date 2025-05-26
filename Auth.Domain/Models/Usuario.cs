@@ -25,7 +25,6 @@ public class Usuario : Entity
     //
     public virtual IList<UsuarioPermissao> Permissoes { get; set; } = new List<UsuarioPermissao>();
     public virtual Empresa Empresa { get; set; }
-    public virtual Motorista Motorista { get; set; }
     //
     public string ObterNomeInteiro()
     {

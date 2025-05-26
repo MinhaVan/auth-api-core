@@ -20,6 +20,7 @@ public class SecretManager
 public class URL
 {
     public string RoutesAPI { get; set; }
+    public string PessoasAPI { get; set; }
 }
 
 [ExcludeFromCodeCoverage]

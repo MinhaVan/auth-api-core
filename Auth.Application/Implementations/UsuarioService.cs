@@ -17,31 +17,31 @@ public class UsuarioService : IUsuarioService
 {
     private readonly IAmazonService _amazonService;
     private readonly IRoutesAPI _routesAPI;
+    private readonly IPessoasAPI _pessoasAPI;
     private readonly IMapper _mapper;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IBaseRepository<UsuarioPermissao> _usuarioPermissaoRepository;
     private readonly IPermissaoRepository _permissaoRepository;
-    private readonly IBaseRepository<Motorista> _motoristaRepository;
     private readonly IUserContext _userContext;
     private readonly ITokenService _tokenService;
     public UsuarioService(
         IUsuarioRepository repo,
         IRoutesAPI routesAPI,
+        IPessoasAPI pessoasAPI,
         IUserContext userContext,
         ITokenService ServiceToken,
         IAmazonService amazonService,
         IBaseRepository<UsuarioPermissao> usuarioPermissaoRepository,
         IPermissaoRepository permissaoRepository,
-        IBaseRepository<Motorista> motoristaRepository,
         IMapper map)
     {
         _amazonService = amazonService;
-        _motoristaRepository = motoristaRepository;
         _permissaoRepository = permissaoRepository;
         _usuarioPermissaoRepository = usuarioPermissaoRepository;
         _userContext = userContext;
         _mapper = map;
         _routesAPI = routesAPI;
+        _pessoasAPI = pessoasAPI;
         _usuarioRepository = repo;
         _tokenService = ServiceToken;
     }
@@ -87,14 +87,14 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.AdicionarAsync(model);
         if (user.IsMotorista)
         {
-            var motorista = new Motorista
+            var motorista = new MotoristaViewModel
             {
                 UsuarioId = model.Id,
                 Vencimento = DateTime.MaxValue,
                 TipoCNH = TipoCNHEnum.Nenhum,
                 CNH = string.Empty
             };
-            await _motoristaRepository.AdicionarAsync(motorista);
+            await _pessoasAPI.AdicionarMotoristaAsync(motorista);
         }
 
         await EnviarEmailConfirmacaoAsync(model);
@@ -135,11 +135,13 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> ObterPorId(int userId)
     {
         var enderecoResponse = await _routesAPI.ObterEnderecosAsync();
-        var model = await _usuarioRepository.BuscarUmAsync(x =>
-            x.Id == userId,
-            x => x.Motorista);
+        var motoristaTask = _pessoasAPI.ObterMotoristaPorUsuarioIdAsync(userId);
+        var usuarioTask = _usuarioRepository.BuscarUmAsync(x => x.Id == userId);
 
-        var dto = _mapper.Map<UsuarioViewModel>(model);
+        await Task.WhenAll(motoristaTask, usuarioTask);
+
+        var dto = _mapper.Map<UsuarioViewModel>(usuarioTask.Result);
+        dto.Motorista = motoristaTask.Result.Data;
         dto.Enderecos = enderecoResponse.Data;
         return dto;
     }

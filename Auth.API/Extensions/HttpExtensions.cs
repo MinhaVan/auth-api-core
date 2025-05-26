@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Auth.Data.APIs;
 using Auth.Domain.Interfaces.APIs;
 using Auth.Service.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +31,15 @@ public static class HttpExtensions
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
 
+        services.AddHttpClient("api-pessoas", client =>
+        {
+            client.BaseAddress = new Uri(secretManager.URL.PessoasAPI);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+
         services.AddScoped<IRoutesAPI, RoutesAPI>();
+        services.AddScoped<IPessoasAPI, PessoasAPI>();
+
 
         Console.WriteLine("Configuração das APIs consumidas realizada com sucesso!");
 
