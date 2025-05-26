@@ -20,6 +20,7 @@ public class UsuarioService : IUsuarioService
     private readonly IPessoasAPI _pessoasAPI;
     private readonly IMapper _mapper;
     private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IBaseRepository<Empresa> _empresaRepository;
     private readonly IBaseRepository<UsuarioPermissao> _usuarioPermissaoRepository;
     private readonly IPermissaoRepository _permissaoRepository;
     private readonly IUserContext _userContext;
@@ -31,12 +32,14 @@ public class UsuarioService : IUsuarioService
         IUserContext userContext,
         ITokenService ServiceToken,
         IAmazonService amazonService,
+        IBaseRepository<Empresa> empresaRepository,
         IBaseRepository<UsuarioPermissao> usuarioPermissaoRepository,
         IPermissaoRepository permissaoRepository,
         IMapper map)
     {
         _amazonService = amazonService;
         _permissaoRepository = permissaoRepository;
+        _empresaRepository = empresaRepository;
         _usuarioPermissaoRepository = usuarioPermissaoRepository;
         _userContext = userContext;
         _mapper = map;
@@ -79,6 +82,7 @@ public class UsuarioService : IUsuarioService
             })
         );
 
+        model.EmpresaId = (await _empresaRepository.BuscarUmAsync(x => x.Id > 0)).Id;
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
         model.UsuarioValidado = true;
