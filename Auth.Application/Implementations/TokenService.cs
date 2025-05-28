@@ -49,7 +49,7 @@ public class TokenService : ITokenService
     public async Task<TokenViewModel> RefreshToken(RefreshTokenRequest user)
     {
         var userModel = await _usuarioRepository.BuscarPorRefreshTokenAsync(user.RefreshToken);
-        if (userModel == null || userModel.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (userModel == null || userModel?.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             throw new BusinessRuleException("Sessão encerrada. Favor reconectar!");
         }
