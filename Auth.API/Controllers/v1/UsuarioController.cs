@@ -14,8 +14,6 @@ namespace Auth.API.Controllers.v1;
 public class UsuarioController : BaseController
 {
     private readonly IUsuarioService _usuarioService;
-
-
     public UsuarioController(IUsuarioService usuarioService)
     {
         _usuarioService = usuarioService;
