@@ -48,9 +48,12 @@ public class TokenService : ITokenService
 
     public async Task<TokenViewModel> RefreshToken(RefreshTokenRequest user)
     {
+        Console.WriteLine($"Gerando tokens para o usuário: {user.RefreshToken}");
+
         var userModel = await _usuarioRepository.BuscarPorRefreshTokenAsync(user.RefreshToken);
         if (userModel == null || userModel?.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
+            Console.WriteLine($"Não foi possível encontrar o usuário com o refresh token.");
             throw new BusinessRuleException("Sessão encerrada. Favor reconectar!");
         }
 
@@ -66,6 +69,8 @@ public class TokenService : ITokenService
         var refreshTokenExpiryTime = now.AddDays(_configuration.DaysToExpiry);
 
         await _usuarioRepository.AtualizarRefreshTokenAsync(userModel.Id, refreshToken, refreshTokenExpiryTime);
+
+        Console.WriteLine($"Novo token gerado com sucesso!.");
 
         return new TokenViewModel(
             authenticated: true,

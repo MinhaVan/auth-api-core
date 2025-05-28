@@ -32,7 +32,7 @@ public class TokenController : BaseController
         return Success(token);
     }
 
-    [HttpPost("refreshToken")]
+    [HttpPost("RefreshToken")]
     public async Task<ActionResult<TokenViewModel>> RefreshToken([FromBody] RefreshTokenRequest user)
     {
         var token = await _tokenService.RefreshToken(user);
