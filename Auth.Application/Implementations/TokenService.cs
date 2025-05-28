@@ -12,6 +12,7 @@ using Auth.Domain.ViewModels;
 using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Repository;
 using Auth.Service.Exceptions;
+using Auth.Domain.ViewModels.Usuario;
 
 namespace Auth.Service.Implementations;
 
@@ -45,7 +46,7 @@ public class TokenService : ITokenService
         return await GenerateTokensForUser(userModel);
     }
 
-    public async Task<TokenViewModel> RefreshToken(UsuarioLoginViewModel user)
+    public async Task<TokenViewModel> RefreshToken(RefreshTokenRequest user)
     {
         var userModel = await _usuarioRepository.BuscarPorRefreshTokenAsync(user.RefreshToken);
         if (userModel == null || userModel.RefreshTokenExpiryTime <= DateTime.UtcNow)
