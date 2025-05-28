@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Auth.Domain.ViewModels;
 using Auth.Domain.Interfaces.Services;
 using System.Diagnostics.CodeAnalysis;
+using System;
+using Auth.Domain.Utils;
 
 namespace Auth.API.Controllers.v1;
 
@@ -35,12 +37,22 @@ public class TokenController : BaseController
     [HttpPost("RefreshToken")]
     public async Task<ActionResult<TokenViewModel>> RefreshToken([FromBody] RefreshTokenRequest user)
     {
-        var token = await _tokenService.RefreshToken(user);
-        if (token == null)
+        try
         {
-            return Default(400, "Acesso negado!", true);
-        }
+            Console.WriteLine($"Vamos tentar gerar um novo token para o usuário -> {user.ToJson()}");
 
-        return Success(token);
+            var token = await _tokenService.RefreshToken(user);
+            if (token == null)
+            {
+                return Default(400, "Acesso negado!", true);
+            }
+
+            return Success(token);
+        }
+        catch (System.Exception ex)
+        {
+            Console.WriteLine($"Exception lançada: -> {ex}");
+            throw;
+        }
     }
 }
