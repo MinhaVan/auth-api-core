@@ -15,7 +15,7 @@ namespace Auth.Service.Implementations;
 
 public class UsuarioService : IUsuarioService
 {
-    private readonly IAmazonService _amazonService;
+    private readonly IEmailService _emailService;
     private readonly IRoutesAPI _routesAPI;
     private readonly IPessoasAPI _pessoasAPI;
     private readonly IMapper _mapper;
@@ -31,13 +31,13 @@ public class UsuarioService : IUsuarioService
         IPessoasAPI pessoasAPI,
         IUserContext userContext,
         ITokenService ServiceToken,
-        IAmazonService amazonService,
+        IEmailService emailService,
         IBaseRepository<Empresa> empresaRepository,
         IBaseRepository<UsuarioPermissao> usuarioPermissaoRepository,
         IPermissaoRepository permissaoRepository,
         IMapper map)
     {
-        _amazonService = amazonService;
+        _emailService = emailService;
         _permissaoRepository = permissaoRepository;
         _empresaRepository = empresaRepository;
         _usuarioPermissaoRepository = usuarioPermissaoRepository;
@@ -85,7 +85,7 @@ public class UsuarioService : IUsuarioService
         model.EmpresaId = (await _empresaRepository.BuscarUmAsync(x => x.Id > 0)).Id;
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
-        model.UsuarioValidado = true;
+        model.UsuarioValidado = false;
         model.EnderecoPrincipalId = null;
 
         await _usuarioRepository.AdicionarAsync(model);
@@ -191,12 +191,10 @@ public class UsuarioService : IUsuarioService
 
     private async Task EnviarEmailConfirmacaoAsync(Usuario model)
     {
-        try
-        {
-            var now = DateTime.Now;
-            var linkDeConfirmacao = "https://www.cadeavan.com.br/confirmacao.html?token=" + model.Id;
-            var titulo = "Confirmação de Cadastro";
-            var mensagem = $@"
+        var now = DateTime.Now;
+        var linkDeConfirmacao = "https://www.gateway.coopertrasmig.coop.br/Auth/v1/Token/Confirmar/" + model.Id;
+        var titulo = "Confirmação de Cadastro";
+        var mensagem = $@"
             <!DOCTYPE html>
             <html lang='pt-br'>
             <head>
@@ -244,26 +242,22 @@ public class UsuarioService : IUsuarioService
             </head>
             <body>
                 <div class='container'>
-                    <h1>Bem-vindo ao Cadê a Van!</h1>
+                    <h1>Bem-vindo ao Coopertrasmig!</h1>
                     <p>Olá, {model.ObterNomeInteiro()}!</p>
-                    <p>Obrigado por se cadastrar no Cadê a Van. Para concluir seu cadastro, por favor, confirme seu endereço de e-mail clicando no botão abaixo:</p>
+                    <p>Obrigado por se cadastrar no Coopertrasmig. Para concluir seu cadastro, por favor, confirme seu endereço de e-mail clicando no botão abaixo:</p>
                     
                     <p><a href='{linkDeConfirmacao}' class='button'>Confirmar E-mail</a></p>
                     
                     <p>Se você não se cadastrou no nosso site, por favor, ignore este e-mail.</p>
                     
                     <div class='footer'>
-                        <p>&copy; {now.Year} Cadê a Van. Todos os direitos reservados.</p>
+                        <p>&copy; {now.Year} Coopertrasmig. Todos os direitos reservados.</p>
                     </div>
                 </div>
             </body>
             </html>";
 
-            await _amazonService.SendEmail(model.Email, titulo, mensagem);
-        }
-        catch (Exception)
-        {
-        }
+        await _emailService.SendEmailAsync(model.Email, titulo, mensagem);
     }
 
     public async Task ConfirmarCadastroAsync(int userId)

@@ -34,6 +34,13 @@ public class TokenController : BaseController
         return Success(token);
     }
 
+    [HttpPost("Confirmar/{usuarioId}")]
+    public async Task<ActionResult> ConfirmarAsync([FromRoute] int usuarioId)
+    {
+        await _tokenService.ConfirmarUsuarioAsync(usuarioId);
+        return Success();
+    }
+
     [HttpPost("RefreshToken")]
     public async Task<ActionResult<TokenViewModel>> RefreshToken([FromBody] RefreshTokenRequest user)
     {

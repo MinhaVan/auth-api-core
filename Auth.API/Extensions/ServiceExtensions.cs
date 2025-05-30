@@ -7,9 +7,7 @@ using Auth.API.Converters;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using System.Reflection;
-using StackExchange.Redis;
 using Auth.Service.Configuration;
-using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Auth.API.Extensions;
@@ -22,7 +20,7 @@ public static class ServiceExtensions
         services.AddHttpContextAccessor();
         services.AddCache(secretManager);
 
-        services.AddScoped<IAmazonService, AmazonService>();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IEmpresaService, EmpresaService>();

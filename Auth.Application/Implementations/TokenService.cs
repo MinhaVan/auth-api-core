@@ -12,7 +12,6 @@ using Auth.Domain.ViewModels;
 using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Repository;
 using Auth.Service.Exceptions;
-using Auth.Domain.ViewModels.Usuario;
 
 namespace Auth.Service.Implementations;
 
@@ -28,6 +27,23 @@ public class TokenService : ITokenService
     {
         _configuration = tokenConfiguration;
         _usuarioRepository = usuarioRepository;
+    }
+
+    public async Task ConfirmarUsuarioAsync(int usuarioId)
+    {
+        if (usuarioId <= 0)
+        {
+            throw new BusinessRuleException("ID do usuário inválido.");
+        }
+
+        var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
+        if (usuario is null)
+        {
+            throw new BusinessRuleException("Usuário não encontrado.");
+        }
+
+        usuario.UsuarioValidado = true;
+        await _usuarioRepository.AtualizarAsync(usuario);
     }
 
     public async Task<TokenViewModel> Login(UsuarioLoginViewModel user)

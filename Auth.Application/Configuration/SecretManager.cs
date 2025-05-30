@@ -14,7 +14,13 @@ public class SecretManager
     public TokenConfigurations TokenConfigurations { get; set; }
     public Google Google { get; set; }
     public URL URL { get; set; }
+    public EmailAPI EmailAPI { get; set; }
     public string AllowedHosts { get; set; }
+}
+
+public class EmailAPI
+{
+    public string Key { get; set; }
 }
 
 public class URL
