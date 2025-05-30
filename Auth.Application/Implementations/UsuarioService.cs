@@ -85,7 +85,7 @@ public class UsuarioService : IUsuarioService
         model.EmpresaId = (await _empresaRepository.BuscarUmAsync(x => x.Id > 0)).Id;
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
-        model.UsuarioValidado = false;
+        model.UsuarioValidado = true;
         model.EnderecoPrincipalId = null;
 
         await _usuarioRepository.AdicionarAsync(model);
