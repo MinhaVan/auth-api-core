@@ -191,6 +191,8 @@ public class UsuarioService : IUsuarioService
 
     private async Task EnviarEmailConfirmacaoAsync(Usuario model)
     {
+        return;
+
         var now = DateTime.Now;
         var linkDeConfirmacao = "https://www.gateway.coopertrasmig.coop.br/Auth/v1/Token/Confirmar/" + model.Id;
         var titulo = "Confirmação de Cadastro";
