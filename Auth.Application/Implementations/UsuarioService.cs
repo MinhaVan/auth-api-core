@@ -10,6 +10,7 @@ using Auth.Domain.Enums;
 using Auth.Service.Exceptions;
 using Auth.Domain.Interfaces.Repositories;
 using Auth.Domain.Interfaces.APIs;
+using System.Collections.Generic;
 
 namespace Auth.Service.Implementations;
 
@@ -136,17 +137,17 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.AtualizarAsync(model);
     }
 
-    public async Task<UsuarioViewModel> ObterPorId(int userId)
+    public async Task<UsuarioViewModel> ObterPorId(int userId, bool obterDadosMotorista = true, bool obterDadosEndereco = true)
     {
-        var enderecoResponse = await _routesAPI.ObterEnderecosAsync();
-        var motoristaTask = _pessoasAPI.ObterMotoristaPorUsuarioIdAsync(userId);
+        var enderecoTask = obterDadosEndereco ? _routesAPI.ObterEnderecosAsync() : Task.FromResult(new BaseResponse<IEnumerable<EnderecoViewModel>>());
+        var motoristaTask = obterDadosMotorista ? _pessoasAPI.ObterMotoristaPorUsuarioIdAsync(userId) : Task.FromResult(new BaseResponse<MotoristaViewModel>());
         var usuarioTask = _usuarioRepository.BuscarUmAsync(x => x.Id == userId);
 
-        await Task.WhenAll(motoristaTask, usuarioTask);
+        await Task.WhenAll(motoristaTask, enderecoTask, usuarioTask);
 
         var dto = _mapper.Map<UsuarioViewModel>(usuarioTask.Result);
         dto.Motorista = motoristaTask.Result.Data;
-        dto.Enderecos = enderecoResponse.Data;
+        dto.Enderecos = enderecoTask.Result.Data;
         return dto;
     }
 

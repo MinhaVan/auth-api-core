@@ -20,9 +20,12 @@ public class UsuarioController : BaseController
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<UsuarioViewModel>> ObterPorId([FromRoute] int userId)
+    public async Task<ActionResult<UsuarioViewModel>> ObterPorId(
+        [FromRoute] int userId,
+        [FromQuery] bool obterDadosMotorista = true,
+        [FromQuery] bool obterDadosEndereco = true)
     {
-        return Success(await _usuarioService.ObterPorId(userId));
+        return Success(await _usuarioService.ObterPorId(userId, obterDadosMotorista, obterDadosEndereco));
     }
 
     [HttpGet("{pagina}/{tamanho}")]
