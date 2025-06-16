@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Auth.Domain.Enums;
+using Auth.Domain.ViewModels.Perfil;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,30 +15,18 @@ namespace Auth.API.Controllers.v1;
 [ExcludeFromCodeCoverage]
 public class PerfilController : BaseController
 {
-    [HttpGet("teste")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Teste()
-    {
-        return Success();
-    }
-
     [HttpGet]
     public async Task<IActionResult> Obter()
     {
-        return Success(await GetPerfil());
-    }
-
-    private async Task<Dictionary<string, int>> GetPerfil()
-    {
-        return await Task.Run(() =>
+        var perfil = new List<PerfilViewModel>();
+        foreach (var value in Enum.GetValues(typeof(PerfilEnum)))
         {
-            var enumValues = new Dictionary<string, int>();
-            foreach (var value in Enum.GetValues(typeof(PerfilEnum)))
+            perfil.Add(new PerfilViewModel
             {
-                enumValues.Add(value.ToString(), (int)value);
-            }
-
-            return enumValues;
-        });
+                Id = (int)value,
+                Nome = value.ToString()
+            });
+        }
+        return Success(perfil);
     }
 }
