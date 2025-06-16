@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Auth.Domain.Enums;
 
 namespace Auth.Domain.ViewModels;
 
@@ -14,7 +13,7 @@ public class UsuarioAtualizarViewModel
     public string Email { get; set; }
     public string PrimeiroNome { get; set; }
     public string UltimoNome { get; set; }
-    public PerfilEnum Perfil { get; set; }
+    public int? Perfil { get; set; }
     public int? PlanoId { get; set; }
     public int? EnderecoPrincipalId { get; set; }
     public bool UsuarioValidado { get; set; }
