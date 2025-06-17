@@ -11,6 +11,7 @@ public class UserMapper : Profile
 {
     public UserMapper()
     {
+        CreateMap<UsuarioBaseViewModel, Usuario>().ReverseMap();
         CreateMap<UsuarioDetalheViewModel, Usuario>().ReverseMap();
 
         CreateMap<UsuarioViewModel, Usuario>()

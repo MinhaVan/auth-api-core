@@ -11,6 +11,7 @@ using Auth.Service.Exceptions;
 using Auth.Domain.Interfaces.Repositories;
 using Auth.Domain.Interfaces.APIs;
 using System.Collections.Generic;
+using Auth.Domain.ViewModels.Usuario;
 
 namespace Auth.Service.Implementations;
 
@@ -58,53 +59,61 @@ public class UsuarioService : IUsuarioService
         return _mapper.Map<PaginadoViewModel<UsuarioViewModel>>(usuarios);
     }
 
-    public async Task<UsuarioViewModel> Registrar(UsuarioNovoViewModel user)
+    public async Task<UsuarioViewModel> RegistrarAsync(UsuarioNovoViewModel user)
+    {
+        user.Senha = _tokenService.Base64ToString(user.Senha);
+        await ValidarUsuarioExistente(user.CPF, user.EmpresaId);
+
+        var model = await CriarUsuario(user, isMotorista: false);
+
+        await _usuarioRepository.AdicionarAsync(model);
+        await EnviarEmailConfirmacaoAsync(model);
+
+        return _mapper.Map<UsuarioViewModel>(model);
+    }
+
+    public async Task<UsuarioViewModel> RegistrarMotoristaAsync(UsuarioMotoristaNovoViewModel user)
+    {
+        user.Senha = _tokenService.Base64ToString(GenerateRandomPassword());
+        await ValidarUsuarioExistente(user.CPF, user.EmpresaId);
+
+        var model = await CriarUsuario(user, isMotorista: true);
+
+        await _usuarioRepository.AdicionarAsync(model);
+        await EnviarEmailConfirmacaoAsync(model);
+
+        return _mapper.Map<UsuarioViewModel>(model);
+        // await _pessoasAPI.AdicionarMotoristaAsync(new MotoristaViewModel
+        // {
+        //     UsuarioId = model.Id,
+        //     Vencimento = DateTime.MaxValue,
+        //     TipoCNH = TipoCNHEnum.Nenhum,
+        //     CNH = string.Empty
+        // });
+    }
+
+    private async Task<Usuario> CriarUsuario(UsuarioBaseViewModel user, bool isMotorista)
     {
         var model = _mapper.Map<Usuario>(user);
-        user.Senha = _tokenService.Base64ToString(user.Senha);
 
-        var usuario = await _usuarioRepository.BuscarPorCpfEmpresaAsync(user.CPF, user.EmpresaId);
-        if (usuario != null && usuario.Id > 0)
-            throw new BusinessRuleException("Usuário já cadastrado!!");
-
-        var permissaoPadroes = await _permissaoRepository
-            .ObterPermissoesPadraoPorEmpresaPerfilAsync(user.EmpresaId, user.IsMotorista);
-
-        if (user.IsMotorista)
-        {
-            model.Perfil = PerfilEnum.Motorista;
-        }
-
-        await _usuarioPermissaoRepository.AdicionarAsync(
-            permissaoPadroes.Select(x => new UsuarioPermissao
-            {
-                UsuarioId = usuario.Id,
-                PermissaoId = x.Id
-            })
-        );
-
-        model.EmpresaId = (await _empresaRepository.BuscarUmAsync(x => x.Id > 0)).Id;
+        var empresa = await _empresaRepository.BuscarUmAsync(x => x.Id > 0);
+        model.EmpresaId = empresa.Id;
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
         model.UsuarioValidado = true;
         model.EnderecoPrincipalId = null;
 
-        await _usuarioRepository.AdicionarAsync(model);
-        if (user.IsMotorista)
+        if (isMotorista)
+            model.Perfil = PerfilEnum.Motorista;
+
+        var permissoes = await _permissaoRepository.ObterPermissoesPadraoPorEmpresaPerfilAsync(user.EmpresaId, isMotorista);
+        await _usuarioPermissaoRepository.AdicionarAsync(permissoes.Select(x => new UsuarioPermissao
         {
-            var motorista = new MotoristaViewModel
-            {
-                UsuarioId = model.Id,
-                Vencimento = DateTime.MaxValue,
-                TipoCNH = TipoCNHEnum.Nenhum,
-                CNH = string.Empty
-            };
-            await _pessoasAPI.AdicionarMotoristaAsync(motorista);
-        }
+            UsuarioId = 0, // Será atualizado pelo banco ao salvar
+            PermissaoId = x.Id
+        }));
 
-        await EnviarEmailConfirmacaoAsync(model);
-
-        return _mapper.Map<UsuarioViewModel>(model);
+        return model;
     }
 
     public async Task Atualizar(UsuarioAtualizarViewModel user)
@@ -180,6 +189,13 @@ public class UsuarioService : IUsuarioService
         });
 
         await _usuarioPermissaoRepository.AdicionarAsync(usuarioPermissao);
+    }
+
+    private async Task ValidarUsuarioExistente(string cpf, int empresaId)
+    {
+        var usuarioExistente = await _usuarioRepository.BuscarPorCpfEmpresaAsync(cpf, empresaId);
+        if (usuarioExistente != null && usuarioExistente.Id > 0)
+            throw new BusinessRuleException("Usuário já cadastrado!!");
     }
 
     private async Task EnviarEmailConfirmacaoAsync(Usuario model)
@@ -266,5 +282,17 @@ public class UsuarioService : IUsuarioService
             usuario.UsuarioValidado = true;
             await _usuarioRepository.AtualizarAsync(usuario);
         }
+    }
+
+    private string GenerateRandomPassword()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new Random();
+        var password = new char[12];
+        for (int i = 0; i < password.Length; i++)
+        {
+            password[i] = chars[random.Next(chars.Length)];
+        }
+        return new string(password);
     }
 }

@@ -45,8 +45,16 @@ public class UsuarioController : BaseController
     [AllowAnonymous]
     public async Task<ActionResult<UsuarioViewModel>> Register([FromBody] UsuarioNovoViewModel user)
     {
-        await _usuarioService.Registrar(user);
-        return Success();
+        var response = await _usuarioService.RegistrarAsync(user);
+        return Success(response);
+    }
+
+    [HttpPost("Motorista")]
+    [AllowAnonymous]
+    public async Task<ActionResult<UsuarioViewModel>> RegistrarMotorista([FromBody] UsuarioMotoristaNovoViewModel user)
+    {
+        var response = await _usuarioService.RegistrarMotoristaAsync(user);
+        return Success(response);
     }
 
     [HttpPut]

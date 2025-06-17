@@ -5,7 +5,8 @@ namespace Auth.Domain.Interfaces.Services;
 
 public interface IUsuarioService
 {
-    Task<UsuarioViewModel> Registrar(UsuarioNovoViewModel user);
+    Task<UsuarioViewModel> RegistrarAsync(UsuarioNovoViewModel user);
+    Task<UsuarioViewModel> RegistrarMotoristaAsync(UsuarioMotoristaNovoViewModel user);
     Task DeletarAsync(int userId);
     Task Atualizar(UsuarioAtualizarViewModel user);
     Task<UsuarioViewModel> ObterPorId(int userId, bool obterDadosMotorista = true, bool obterDadosEndereco = true);
