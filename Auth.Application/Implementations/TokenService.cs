@@ -12,22 +12,16 @@ using Auth.Domain.ViewModels;
 using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Repository;
 using Auth.Service.Exceptions;
+using AutoMapper;
 
 namespace Auth.Service.Implementations;
 
-public class TokenService : ITokenService
+public class TokenService(
+    IMapper _mapper,
+    TokenConfigurations _configuration,
+    IUsuarioRepository _usuarioRepository) : ITokenService
 {
-    private readonly TokenConfigurations _configuration;
-    private readonly IUsuarioRepository _usuarioRepository;
     private const string DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-    public TokenService(
-        TokenConfigurations tokenConfiguration,
-        IUsuarioRepository usuarioRepository)
-    {
-        _configuration = tokenConfiguration;
-        _usuarioRepository = usuarioRepository;
-    }
 
     public async Task ConfirmarUsuarioAsync(int usuarioId)
     {
@@ -93,7 +87,8 @@ public class TokenService : ITokenService
             created: now.ToString(DATE_FORMAT),
             expiration: expirationDate.ToString(DATE_FORMAT),
             accessToken: accessToken,
-            refreshToken: refreshToken
+            refreshToken: refreshToken,
+            userDto: _mapper.Map<UsuarioViewModel>(userModel)
         );
     }
 
