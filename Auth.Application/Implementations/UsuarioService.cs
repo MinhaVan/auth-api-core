@@ -54,7 +54,7 @@ public class UsuarioService : IUsuarioService
     public async Task<PaginadoViewModel<UsuarioViewModel>> BuscarPaginadoAsync(int pagina, int tamanho)
     {
         var usuarios = await _usuarioRepository
-            .BuscarPaginadoAsync(pagina, tamanho, x => x.EmpresaId == _userContext.Empresa);
+            .BuscarPaginadoAsync(pagina, tamanho, x => true == true);
 
         return _mapper.Map<PaginadoViewModel<UsuarioViewModel>>(usuarios);
     }
@@ -62,7 +62,7 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> RegistrarAsync(UsuarioNovoViewModel user)
     {
         user.Senha = _tokenService.Base64ToString(user.Senha);
-        await ValidarUsuarioExistente(user.CPF, user.EmpresaId);
+        await ValidarUsuarioExistente(user.CPF);
 
         var model = await CriarUsuario(user, isMotorista: false);
 
@@ -75,7 +75,7 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> RegistrarMotoristaAsync(UsuarioMotoristaNovoViewModel user)
     {
         user.Senha = _tokenService.Base64ToString(GenerateRandomPassword());
-        await ValidarUsuarioExistente(user.CPF, user.EmpresaId);
+        await ValidarUsuarioExistente(user.CPF);
 
         var model = await CriarUsuario(user, isMotorista: true);
 
@@ -97,7 +97,6 @@ public class UsuarioService : IUsuarioService
         var model = _mapper.Map<Usuario>(user);
 
         var empresa = await _empresaRepository.BuscarUmAsync(x => x.Id > 0);
-        model.EmpresaId = empresa.Id;
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
         model.UsuarioValidado = true;
@@ -106,12 +105,12 @@ public class UsuarioService : IUsuarioService
         if (isMotorista)
             model.Perfil = PerfilEnum.Motorista;
 
-        var permissoes = await _permissaoRepository.ObterPermissoesPadraoPorEmpresaPerfilAsync(user.EmpresaId, isMotorista);
-        await _usuarioPermissaoRepository.AdicionarAsync(permissoes.Select(x => new UsuarioPermissao
-        {
-            UsuarioId = 0, // Será atualizado pelo banco ao salvar
-            PermissaoId = x.Id
-        }));
+        // var permissoes = await _permissaoRepository.ObterPermissoesPadraoPorEmpresaPerfilAsync(isMotorista);
+        // await _usuarioPermissaoRepository.AdicionarAsync(permissoes.Select(x => new UsuarioPermissao
+        // {
+        //     UsuarioId = 0, // Será atualizado pelo banco ao salvar
+        //     PermissaoId = x.Id
+        // }));
 
         return model;
     }
@@ -167,8 +166,8 @@ public class UsuarioService : IUsuarioService
         var permissoesDoUsuario = await _usuarioPermissaoRepository
             .BuscarAsync(x => x.UsuarioId == user.UsuarioId && user.PermissaoId.Contains(x.Id));
 
-        System.Linq.Expressions.Expression<Func<Permissao, bool>> predicate =
-            x => x.EmpresaId == _userContext.Empresa &&
+        System.Linq.Expressions.Expression<Func<Permissao, bool>> predicate = x =>
+                // x => x.EmpresaId == _userContext.Empresa &&
                 usuario.Perfil == PerfilEnum.Motorista ? x.PadraoMotorista :
                 usuario.Perfil == PerfilEnum.Passageiro ? x.PadraoPassageiros :
                 usuario.Perfil == PerfilEnum.Responsavel ? x.PadraoResponsavel :
@@ -191,9 +190,9 @@ public class UsuarioService : IUsuarioService
         await _usuarioPermissaoRepository.AdicionarAsync(usuarioPermissao);
     }
 
-    private async Task ValidarUsuarioExistente(string cpf, int empresaId)
+    private async Task ValidarUsuarioExistente(string cpf)
     {
-        var usuarioExistente = await _usuarioRepository.BuscarPorCpfEmpresaAsync(cpf, empresaId);
+        var usuarioExistente = await _usuarioRepository.BuscarPorCpfEmpresaAsync(cpf);
         if (usuarioExistente != null && usuarioExistente.Id > 0)
             throw new BusinessRuleException("Usuário já cadastrado!!");
     }

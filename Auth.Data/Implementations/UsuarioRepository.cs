@@ -37,7 +37,6 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     public async Task<Usuario> LoginAsync(UsuarioLoginViewModel user)
     {
         var query = _ctx.Usuarios.Where(x =>
-            x.EmpresaId == user.EmpresaId &&
             x.Senha.Equals(user.Senha) &&
             (x.CPF.Equals(user.CPF) || x.Email.Equals(user.Email))
         );
@@ -55,11 +54,11 @@ public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
         return await _ctx.Usuarios.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
     }
 
-    public async Task<Usuario> BuscarPorCpfEmpresaAsync(string cpf, int empresaId)
+    public async Task<Usuario> BuscarPorCpfEmpresaAsync(string cpf)
     {
         return await _ctx.Usuarios
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.CPF.Equals(cpf) && x.EmpresaId == empresaId);
+            .FirstOrDefaultAsync(x => x.CPF.Equals(cpf));
     }
 
     public string ComputeHash(string senha)

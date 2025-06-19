@@ -22,7 +22,6 @@ public class UsuarioViewModel
     public string Senha { get; set; }
     public string RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
-    public int EmpresaId { get; set; }
 
     public virtual IEnumerable<EnderecoViewModel> Enderecos { get; set; } = new List<EnderecoViewModel>();
     public virtual EnderecoViewModel EnderecoPrincipal { get; set; } = new EnderecoViewModel();

@@ -108,7 +108,6 @@ public class TokenService(
         {
             new Claim("UserId", usuario.Id.ToString()),
             new Claim("Perfil", usuario.Perfil.ToString()),
-            new Claim("Empresa", usuario.EmpresaId.ToString())
         };
 
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Secret));

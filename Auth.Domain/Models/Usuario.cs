@@ -14,7 +14,6 @@ public class Usuario : Entity
     public string Contato { get; set; }
     public string PrimeiroNome { get; set; }
     public string UltimoNome { get; set; }
-    public int EmpresaId { get; set; }
     public bool UsuarioValidado { get; set; }
     public string RefreshToken { get; set; }
     public string ClientIdPaymentGateway { get; set; }

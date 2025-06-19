@@ -8,5 +8,4 @@ public abstract class UsuarioBaseViewModel
     public string Email { get; set; }
     public string PrimeiroNome { get; set; }
     public string UltimoNome { get; set; }
-    public int EmpresaId { get; set; }
 }
