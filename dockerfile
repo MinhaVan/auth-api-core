@@ -9,19 +9,19 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["Auth.sln", "."]
-COPY ["Auth.API/Auth.API.csproj", "Auth.API/"]
-COPY ["Auth.Domain/Auth.Domain.csproj", "Auth.Domain/"]
-COPY ["Auth.Application/Auth.Application.csproj", "Auth.Application/"]
-COPY ["Auth.Data/Auth.Data.csproj", "Auth.Data/"]
-COPY ["Auth.Tests/Auth.Tests.csproj", "Auth.Tests/"]
+COPY ["VanFinder.sln", "."]
+COPY ["VanFinder.API/VanFinder.API.csproj", "VanFinder.API/"]
+COPY ["VanFinder.Domain/VanFinder.Domain.csproj", "VanFinder.Domain/"]
+COPY ["VanFinder.Application/VanFinder.Application.csproj", "VanFinder.Application/"]
+COPY ["VanFinder.Data/VanFinder.Data.csproj", "VanFinder.Data/"]
+COPY ["VanFinder.Tests/VanFinder.Tests.csproj", "VanFinder.Tests/"]
 
 # Restaura as dependências
-RUN dotnet restore "Auth.sln"
+RUN dotnet restore "VanFinder.sln"
 
 # Copia o restante do código e realiza o build
 COPY . .
-WORKDIR "/src/Auth.API"
+WORKDIR "/src/VanFinder.API"
 RUN dotnet build -c $BUILD_CONFIGURATION -o /app/build
 
 # Etapa para publish
@@ -33,4 +33,4 @@ RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Auth.API.dll"]
+ENTRYPOINT ["dotnet", "VanFinder.API.dll"]
