@@ -174,12 +174,12 @@ public class UsuarioService(
         var emailRequest = new EmailRequest()
         {
             TipoEmail = model.Perfil == PerfilEnum.Motorista ? TipoEmailEnum.NovoMotorista : TipoEmailEnum.NovoResponsavel,
-            Data = model.ToJson(),
+            Data = new { nome = model.PrimeiroNome + " " + model.UltimoNome ?? string.Empty }.ToJson(),
             Destinos = new List<string> { model.Email },
             Assunto = "Confirmação de Cadastro"
         };
 
-        _rabbitMqRepository.Publish(RabbitMqQueues.CadastroUsuario, emailRequest.NewQueue());
+        _rabbitMqRepository.Publish(RabbitMqQueues.Email, emailRequest.NewQueue());
     }
 
     public async Task ConfirmarCadastroAsync(int userId)
