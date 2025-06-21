@@ -48,6 +48,7 @@ public static class Program
                         .AddCustomRepository()
                         .AddCustomMapper()
                         .AddControllersWithFilters()
+                        .AddQueue(secretManager)
                         .AddCustomHttp(secretManager);
 
         // Configura o logger

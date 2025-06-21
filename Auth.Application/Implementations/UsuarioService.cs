@@ -12,45 +12,23 @@ using Auth.Domain.Interfaces.Repositories;
 using Auth.Domain.Interfaces.APIs;
 using System.Collections.Generic;
 using Auth.Domain.ViewModels.Usuario;
+using Auth.Domain.Utils;
+using Auth.Domain.ViewModels.Email;
 
 namespace Auth.Service.Implementations;
 
-public class UsuarioService : IUsuarioService
+public class UsuarioService(
+        IUsuarioRepository _usuarioRepository,
+        IRoutesAPI _routesAPI,
+        IPessoasAPI _pessoasAPI,
+        IUserContext _userContext,
+        ITokenService _tokenService,
+        IBaseRepository<Empresa> _empresaRepository,
+        IBaseRepository<UsuarioPermissao> _usuarioPermissaoRepository,
+        IPermissaoRepository _permissaoRepository,
+        IRabbitMqRepository _rabbitMqRepository,
+        IMapper _mapper) : IUsuarioService
 {
-    private readonly IEmailService _emailService;
-    private readonly IRoutesAPI _routesAPI;
-    private readonly IPessoasAPI _pessoasAPI;
-    private readonly IMapper _mapper;
-    private readonly IUsuarioRepository _usuarioRepository;
-    private readonly IBaseRepository<Empresa> _empresaRepository;
-    private readonly IBaseRepository<UsuarioPermissao> _usuarioPermissaoRepository;
-    private readonly IPermissaoRepository _permissaoRepository;
-    private readonly IUserContext _userContext;
-    private readonly ITokenService _tokenService;
-    public UsuarioService(
-        IUsuarioRepository repo,
-        IRoutesAPI routesAPI,
-        IPessoasAPI pessoasAPI,
-        IUserContext userContext,
-        ITokenService ServiceToken,
-        IEmailService emailService,
-        IBaseRepository<Empresa> empresaRepository,
-        IBaseRepository<UsuarioPermissao> usuarioPermissaoRepository,
-        IPermissaoRepository permissaoRepository,
-        IMapper map)
-    {
-        _emailService = emailService;
-        _permissaoRepository = permissaoRepository;
-        _empresaRepository = empresaRepository;
-        _usuarioPermissaoRepository = usuarioPermissaoRepository;
-        _userContext = userContext;
-        _mapper = map;
-        _routesAPI = routesAPI;
-        _pessoasAPI = pessoasAPI;
-        _usuarioRepository = repo;
-        _tokenService = ServiceToken;
-    }
-
     public async Task<PaginadoViewModel<UsuarioViewModel>> BuscarPaginadoAsync(int pagina, int tamanho)
     {
         var usuarios = await _usuarioRepository
@@ -67,7 +45,7 @@ public class UsuarioService : IUsuarioService
         var model = await CriarUsuario(user, isMotorista: false);
 
         await _usuarioRepository.AdicionarAsync(model);
-        await EnviarEmailConfirmacaoAsync(model);
+        EnviarEmailConfirmacaoAsync(model);
 
         return _mapper.Map<UsuarioViewModel>(model);
     }
@@ -80,16 +58,9 @@ public class UsuarioService : IUsuarioService
         var model = await CriarUsuario(user, isMotorista: true);
 
         await _usuarioRepository.AdicionarAsync(model);
-        await EnviarEmailConfirmacaoAsync(model);
+        EnviarEmailConfirmacaoAsync(model);
 
         return _mapper.Map<UsuarioViewModel>(model);
-        // await _pessoasAPI.AdicionarMotoristaAsync(new MotoristaViewModel
-        // {
-        //     UsuarioId = model.Id,
-        //     Vencimento = DateTime.MaxValue,
-        //     TipoCNH = TipoCNHEnum.Nenhum,
-        //     CNH = string.Empty
-        // });
     }
 
     private async Task<Usuario> CriarUsuario(UsuarioBaseViewModel user, bool isMotorista)
@@ -198,77 +169,17 @@ public class UsuarioService : IUsuarioService
             throw new BusinessRuleException("Usuário já cadastrado!!");
     }
 
-    private async Task EnviarEmailConfirmacaoAsync(Usuario model)
+    private void EnviarEmailConfirmacaoAsync(Usuario model)
     {
-        return;
+        var emailRequest = new EmailRequest()
+        {
+            TipoEmail = model.Perfil == PerfilEnum.Motorista ? TipoEmailEnum.NovoMotorista : TipoEmailEnum.NovoResponsavel,
+            Data = model.ToJson(),
+            Destinos = new List<string> { model.Email },
+            Assunto = "Confirmação de Cadastro"
+        };
 
-        var now = DateTime.Now;
-        var linkDeConfirmacao = "https://www.gateway.coopertrasmig.coop.br/Auth/v1/Token/Confirmar/" + model.Id;
-        var titulo = "Confirmação de Cadastro";
-        var mensagem = $@"
-            <!DOCTYPE html>
-            <html lang='pt-br'>
-            <head>
-                <meta charset='UTF-8'>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                <title>Confirmação de Cadastro</title>
-                <style>
-                    body {{
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                        color: #333;
-                        padding: 20px;
-                    }}
-                    .container {{
-                        background-color: #fff;
-                        max-width: 600px;
-                        margin: 0 auto;
-                        padding: 20px;
-                        border-radius: 8px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                    }}
-                    h1 {{
-                        color: #007bff;
-                    }}
-                    p {{
-                        font-size: 16px;
-                    }}
-                    .button {{
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px 20px;
-                        text-decoration: none;
-                        border-radius: 5px;
-                        font-size: 16px;
-                        display: inline-block;
-                        margin-top: 20px;
-                    }}
-                    .footer {{
-                        text-align: center;
-                        font-size: 14px;
-                        color: #777;
-                        margin-top: 20px;
-                    }}
-                </style>
-            </head>
-            <body>
-                <div class='container'>
-                    <h1>Bem-vindo ao Coopertrasmig!</h1>
-                    <p>Olá, {model.ObterNomeInteiro()}!</p>
-                    <p>Obrigado por se cadastrar no Coopertrasmig. Para concluir seu cadastro, por favor, confirme seu endereço de e-mail clicando no botão abaixo:</p>
-                    
-                    <p><a href='{linkDeConfirmacao}' class='button'>Confirmar E-mail</a></p>
-                    
-                    <p>Se você não se cadastrou no nosso site, por favor, ignore este e-mail.</p>
-                    
-                    <div class='footer'>
-                        <p>&copy; {now.Year} Coopertrasmig. Todos os direitos reservados.</p>
-                    </div>
-                </div>
-            </body>
-            </html>";
-
-        await _emailService.SendEmailAsync(model.Email, titulo, mensagem);
+        _rabbitMqRepository.Publish(RabbitMqQueues.CadastroUsuario, emailRequest.NewQueue());
     }
 
     public async Task ConfirmarCadastroAsync(int userId)
