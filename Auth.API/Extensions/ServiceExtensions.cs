@@ -20,7 +20,6 @@ public static class ServiceExtensions
         services.AddHttpContextAccessor();
         services.AddCache(secretManager);
 
-        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IEmpresaService, EmpresaService>();
