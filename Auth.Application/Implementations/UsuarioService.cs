@@ -171,10 +171,17 @@ public class UsuarioService(
 
     private void EnviarEmailConfirmacaoAsync(Usuario model)
     {
+        var request = new
+        {
+            nome = model.PrimeiroNome + " " + model.UltimoNome ?? string.Empty,
+            urlValidacao = "https://www.gateway.coopertrasmig.coop.br/Auth/v1/Token/Confirmar/Usuario/" + model.Id,
+            urlCriarSenha = "https://app.coopertrasmig.coop.br/confirmar-senha?usuarioId=" + model.Id,
+        };
+
         var emailRequest = new EmailRequest()
         {
             TipoEmail = model.Perfil == PerfilEnum.Motorista ? TipoEmailEnum.NovoMotorista : TipoEmailEnum.NovoResponsavel,
-            Data = new { nome = model.PrimeiroNome + " " + model.UltimoNome ?? string.Empty }.ToJson(),
+            Data = request.ToJson(),
             Destinos = new List<string> { model.Email },
             Assunto = "Confirmação de Cadastro"
         };

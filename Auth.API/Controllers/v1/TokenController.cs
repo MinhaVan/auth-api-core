@@ -34,7 +34,7 @@ public class TokenController : BaseController
         return Success(token);
     }
 
-    [HttpPost("Confirmar/Usuario/{usuarioId}")]
+    [HttpGet("Confirmar/Usuario/{usuarioId}")]
     public async Task<ActionResult> ConfirmarAsync([FromRoute] int usuarioId)
     {
         await _tokenService.ConfirmarUsuarioAsync(usuarioId);
