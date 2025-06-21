@@ -34,10 +34,17 @@ public class TokenController : BaseController
         return Success(token);
     }
 
-    [HttpPost("Confirmar/{usuarioId}")]
+    [HttpPost("Confirmar/Usuario/{usuarioId}")]
     public async Task<ActionResult> ConfirmarAsync([FromRoute] int usuarioId)
     {
         await _tokenService.ConfirmarUsuarioAsync(usuarioId);
+        return Success();
+    }
+
+    [HttpPost("Confirmar/Motorista/{usuarioId}")]
+    public async Task<ActionResult> ConfirmarMotoristaAsync([FromRoute] int usuarioId, [FromBody] UsuarioLoginViewModel user)
+    {
+        await _tokenService.ConfirmarMotoristaAsync(usuarioId, user);
         return Success();
     }
 

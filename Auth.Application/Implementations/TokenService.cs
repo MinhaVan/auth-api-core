@@ -23,6 +23,25 @@ public class TokenService(
 {
     private const string DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+
+    public async Task ConfirmarMotoristaAsync(int usuarioId, UsuarioLoginViewModel user)
+    {
+        if (usuarioId <= 0)
+        {
+            throw new BusinessRuleException("ID do usuário inválido.");
+        }
+
+        var usuario = await _usuarioRepository.ObterPorIdAsync(usuarioId);
+        if (usuario is null)
+        {
+            throw new BusinessRuleException("Usuário não encontrado.");
+        }
+
+        usuario.Senha = Base64ToString(user.Senha);
+        usuario.UsuarioValidado = true;
+        await _usuarioRepository.AtualizarAsync(usuario);
+    }
+
     public async Task ConfirmarUsuarioAsync(int usuarioId)
     {
         if (usuarioId <= 0)
