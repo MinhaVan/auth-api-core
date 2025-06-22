@@ -19,12 +19,6 @@ public static class HttpExtensions
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
 
-        services.AddHttpClient("api-googlemaps", client =>
-        {
-            client.BaseAddress = new Uri(secretManager.Google.BaseUrl);
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-        });
-
         services.AddHttpClient("api-routes", client =>
         {
             client.BaseAddress = new Uri(secretManager.URL.RoutesAPI);

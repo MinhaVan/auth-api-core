@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Auth.Domain.Interfaces.Repository;
 using Auth.Service.Exceptions;
 using AutoMapper;
+using Auth.Domain.Enums;
 
 namespace Auth.Service.Implementations;
 
@@ -23,6 +24,26 @@ public class TokenService(
 {
     private const string DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    public TokenViewModel GerarTokenAsync(int empresaId)
+    {
+        var now = DateTime.UtcNow;
+        var expirationDate = now.AddMinutes(1);
+        var accessToken = GenerateAccessToken(new Usuario
+        {
+            Id = 0,
+            Perfil = PerfilEnum.Suporte,
+            EmpresaId = empresaId
+        });
+
+        return new TokenViewModel(
+            authenticated: true,
+            created: now.ToString(DATE_FORMAT),
+            expiration: expirationDate.ToString(DATE_FORMAT),
+            accessToken: accessToken,
+            refreshToken: null,
+            userDto: null
+        );
+    }
 
     public async Task ConfirmarMotoristaAsync(int usuarioId, UsuarioLoginViewModel user)
     {
@@ -59,7 +80,7 @@ public class TokenService(
         await _usuarioRepository.AtualizarAsync(usuario);
     }
 
-    public async Task<TokenViewModel> Login(UsuarioLoginViewModel user)
+    public async Task<TokenViewModel> LoginAsync(UsuarioLoginViewModel user)
     {
         user.Senha = Base64ToString(user.Senha);
         user.Senha = _usuarioRepository.ComputeHash(user.Senha);

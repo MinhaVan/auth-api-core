@@ -6,6 +6,7 @@ using Auth.Domain.Interfaces.Services;
 using System.Diagnostics.CodeAnalysis;
 using System;
 using Auth.Domain.Utils;
+using Auth.API.Filters;
 
 namespace Auth.API.Controllers.v1;
 
@@ -22,10 +23,23 @@ public class TokenController : BaseController
         _tokenService = tokenService;
     }
 
-    [HttpPost("login")]
-    public async Task<ActionResult<TokenViewModel>> Login([FromBody] UsuarioLoginViewModel user)
+    [HttpPost("Gerar/{empresaId}")]
+    [ValidateXKeyBatch]
+    public ActionResult<TokenViewModel> GerarTokenAsync([FromRoute] int empresaId)
     {
-        var token = await _tokenService.Login(user);
+        var token = _tokenService.GerarTokenAsync(empresaId);
+        if (token == null)
+        {
+            return Default(400, "Acesso negado!", true);
+        }
+
+        return Success(token);
+    }
+
+    [HttpPost("Login")]
+    public async Task<ActionResult<TokenViewModel>> LoginAsync([FromBody] UsuarioLoginViewModel user)
+    {
+        var token = await _tokenService.LoginAsync(user);
         if (token == null)
         {
             return Default(400, "Acesso negado!", true);
