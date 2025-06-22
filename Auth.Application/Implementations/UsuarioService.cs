@@ -13,7 +13,6 @@ using Auth.Domain.Interfaces.APIs;
 using System.Collections.Generic;
 using Auth.Domain.ViewModels.Usuario;
 using Auth.Domain.Utils;
-using Auth.Domain.ViewModels.Email;
 
 namespace Auth.Service.Implementations;
 
@@ -171,22 +170,21 @@ public class UsuarioService(
 
     private void EnviarEmailConfirmacaoAsync(Usuario model)
     {
-        var request = new
+        var emailRequest = new NotificacaoRequest()
         {
-            nome = model.PrimeiroNome + " " + model.UltimoNome ?? string.Empty,
-            urlValidacao = "https://www.gateway.coopertrasmig.coop.br/Auth/v1/Token/Confirmar/Usuario/" + model.Id,
-            urlCriarSenha = "https://app.coopertrasmig.coop.br/confirmar-senha?usuarioId=" + model.Id,
-        };
-
-        var emailRequest = new EmailRequest()
-        {
-            TipoEmail = model.Perfil == PerfilEnum.Motorista ? TipoEmailEnum.NovoMotorista : TipoEmailEnum.NovoResponsavel,
-            Data = request.ToJson(),
+            TipoContatoNotificacao = TipoContatoNotificacaoEnum.Email,
+            TipoNotificacao = model.Perfil == PerfilEnum.Motorista ? TipoNotificacaoEnum.NovoMotorista : TipoNotificacaoEnum.NovoResponsavel,
             Destinos = new List<string> { model.Email },
-            Assunto = "Confirmação de Cadastro"
+            Assunto = "Confirmação de Cadastro",
+            Data = new
+            {
+                nome = model.PrimeiroNome + " " + model.UltimoNome ?? string.Empty,
+                urlValidacao = "https://www.gateway.coopertrasmig.coop.br/Auth/v1/Token/Confirmar/Usuario/" + model.Id,
+                urlCriarSenha = "https://app.coopertrasmig.coop.br/confirmar-senha?usuarioId=" + model.Id,
+            }.ToJson()
         };
 
-        _rabbitMqRepository.Publish(RabbitMqQueues.Email, emailRequest.NewQueue());
+        _rabbitMqRepository.Publish(RabbitMqQueues.EnviarNotificacao, emailRequest.NewQueue());
     }
 
     public async Task ConfirmarCadastroAsync(int userId)
