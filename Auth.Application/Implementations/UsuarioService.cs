@@ -71,7 +71,7 @@ public class UsuarioService(
         model.EmpresaId = empresa.Id;
         model.Status = StatusEntityEnum.Ativo;
         model.Senha = _usuarioRepository.ComputeHash(user.Senha);
-        model.UsuarioValidado = true;
+        model.UsuarioValidado = false;
         model.EnderecoPrincipalId = null;
 
         if (isMotorista)
