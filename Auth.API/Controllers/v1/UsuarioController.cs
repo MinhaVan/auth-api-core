@@ -22,8 +22,8 @@ public class UsuarioController : BaseController
     [HttpGet("{userId}")]
     public async Task<ActionResult<UsuarioViewModel>> ObterPorId(
         [FromRoute] int userId,
-        [FromQuery] bool obterDadosMotorista = true,
-        [FromQuery] bool obterDadosEndereco = true)
+        [FromQuery] bool obterDadosMotorista = false,
+        [FromQuery] bool obterDadosEndereco = false)
     {
         return Success(await _usuarioService.ObterPorId(userId, obterDadosMotorista, obterDadosEndereco));
     }
