@@ -23,6 +23,8 @@ public class UsuarioViewModel
     public string RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
     public int EmpresaId { get; set; }
+    public bool NotificarViaTelefone { get; set; }
+    public bool NotificarViaEmail { get; set; }
 
     public virtual IEnumerable<EnderecoViewModel> Enderecos { get; set; } = new List<EnderecoViewModel>();
     public virtual EnderecoViewModel EnderecoPrincipal { get; set; } = new EnderecoViewModel();

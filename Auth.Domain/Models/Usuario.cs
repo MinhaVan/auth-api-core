@@ -22,6 +22,8 @@ public class Usuario : Entity
     public DateTime RefreshTokenExpiryTime { get; set; }
     public int? PlanoId { get; set; }
     public int? EnderecoPrincipalId { get; set; }
+    public bool NotificarViaTelefone { get; set; } = false;
+    public bool NotificarViaEmail { get; set; } = false;
     //
     public virtual IList<UsuarioPermissao> Permissoes { get; set; } = new List<UsuarioPermissao>();
     public virtual Empresa Empresa { get; set; }
